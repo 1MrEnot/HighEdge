@@ -1,7 +1,13 @@
 using System.Text.Json;
+using OpenTelemetry;
+using OpenTelemetry.Instrumentation.StackExchangeRedis;
+using OpenTelemetry.Trace;
+using StackExchange.Redis;
+using Straonit.HighEdge.Core.Configuration;
 using Straonit.HighEdge.Ioc;
 using Straonit.HighEdge.Models;
 using Straonit.HighEdge.Services.Implementations;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
