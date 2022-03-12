@@ -6,4 +6,15 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+        <Protobuf Include="Protos/Secret.proto" />
+
+      <PackageReference Include="Grpc" Version="2.44.0" />
+      <PackageReference Include="Grpc.AspNetCore" Version="2.43.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Straonit.HighEdge.Core\Straonit.HighEdge.Core.csproj" />
+    </ItemGroup>
+
 </Project>
