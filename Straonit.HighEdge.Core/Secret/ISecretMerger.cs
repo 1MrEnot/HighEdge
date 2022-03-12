@@ -2,5 +2,5 @@
 
 public interface ISecretMerger
 {
-    
+    SecretWithKey MergeSecret(SplittedSecret splittedSecret);
 }

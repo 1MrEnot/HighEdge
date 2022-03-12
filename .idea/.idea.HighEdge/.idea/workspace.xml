@@ -4,8 +4,18 @@
     <projectFile profileName="Straonit.HighEdge">Straonit.HighEdge/Straonit.HighEdge.csproj</projectFile>
     <projectFile profileName="IIS Express">Straonit.HighEdge/Straonit.HighEdge.csproj</projectFile>
   </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="143ba566-9ba9-413c-a91a-4322e9c209d9" name="Changes" comment="Created libs" />
+    <list default="true" id="143ba566-9ba9-413c-a91a-4322e9c209d9" name="Changes" comment="Created interfaces and dto for secret splitting/merging">
+      <change afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Secret/SplittedSecret.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.HighEdge/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HighEdge/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Secret/ISecretMerger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Secret/ISecretMerger.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Secret/ISecretSplitter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Secret/ISecretSplitter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Secret/Class1.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Secret/Class1.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Secret/Straonit.HighEdge.Secret.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Secret/Straonit.HighEdge.Secret.csproj" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,7 +25,9 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="26HTcKpAvtrk1EUteO1s5w7oIbJ" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -25,6 +37,10 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="application.passwordSafe" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
@@ -68,7 +84,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1647079593799</updated>
-      <workItem from="1647079602429" duration="331000" />
+      <workItem from="1647079602429" duration="2202000" />
     </task>
     <task id="LOCAL-00001" summary="Init">
       <created>1647079645080</created>
@@ -84,7 +100,14 @@
       <option name="project" value="LOCAL" />
       <updated>1647079895901</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Created interfaces and dto for secret splitting/merging">
+      <created>1647080342553</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1647080342553</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -105,6 +128,7 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Init" />
     <MESSAGE value="Created libs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created libs" />
+    <MESSAGE value="Created interfaces and dto for secret splitting/merging" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created interfaces and dto for secret splitting/merging" />
   </component>
 </project>
