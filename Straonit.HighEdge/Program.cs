@@ -1,11 +1,10 @@
 using System.Text.Json;
-using OpenTelemetry;
-using OpenTelemetry.Instrumentation.StackExchangeRedis;
-using OpenTelemetry.Trace;
-using StackExchange.Redis;
+using Straonit.HighEdge.Core;
 using Straonit.HighEdge.Core.Configuration;
+using Straonit.HighEdge.Core.Distribution;
+using Straonit.HighEdge.Infrastructure.Grpc;
+using Straonit.HighEdge.Infrastructure.Service;
 using Straonit.HighEdge.Ioc;
-using Straonit.HighEdge.Models;
 using Straonit.HighEdge.Services.Implementations;
 
 
@@ -34,15 +33,18 @@ builder.Services.AddShamirServices();
 
 //builder.Services.AddTransient(sp => sp.GetRequiredService<StatusChecker>());
 builder.Services.AddTransient<StatusChecker>();
+builder.Services.AddTransient<ISecretService, SecretService>();
 
-Environment.SetEnvironmentVariable("ClusterConfig", "/home/v-user/Desktop/HighEdge/Straonit.HighEdge/config.json");
-var clusterConfigJson = File.ReadAllText(Environment.GetEnvironmentVariable("ClusterConfig"));
-//System.Console.WriteLine("Cluster config JSON: "+clusterConfigJson);
+var clusterConfigJson = File.ReadAllText(@"C:\Users\Max\RiderProjects\HighEdge\Straonit.HighEdge\config.json");
 var clusterConfig = JsonSerializer.Deserialize<ClusterConfig>(clusterConfigJson);
-//System.Console.WriteLine(clusterConfig.NodesCount);
 builder.Services.AddSingleton<ClusterConfig>(clusterConfig);
+builder.Services.AddTransient<DistributedSecretSerivce>();
 
 builder.Services.AddHttpClient();
+builder.Services.AddGrpc();
+
+AppContext.SetSwitch(
+    "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
 var app = builder.Build();
 
@@ -53,9 +55,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.MapGrpcService<GrpcServer>();
 
 app.MapControllers();
 

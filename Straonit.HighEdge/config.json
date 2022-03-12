@@ -2,6 +2,7 @@
     "NodesCount": 5,
     "RequiredNodesCount": 3,
     "Nodes":[
-        "127.0.0.1"
+        "https://127.0.0.1:7016",
+        "https://127.0.0.1:7017"
     ]
 }

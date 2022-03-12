@@ -14,17 +14,27 @@ using Core.SplitSecret;
 public class SecretService:ISecretService
 {
     private readonly ClusterConfig _config;
-    public SecretService(ClusterConfig config) => (_config)=(config);
+    private readonly GrpcChannelOptions _dangerousChannelOptions;
 
+    public SecretService(ClusterConfig config)
+    {
+        _config = config;
+        var dangerousHandler = new HttpClientHandler();
+        dangerousHandler.ServerCertificateCustomValidationCallback
+            = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+        _dangerousChannelOptions = new GrpcChannelOptions
+        {
+            HttpHandler = dangerousHandler
+        };
+    }
 
     public async Task<Response> CreateSecret(SplittedSecret splittedSecret)
     {
         var successNodesCount = 0;
-        var nodes = _config.Nodes.ToArray();
 
-        for (var i=0;i< _config.NodesCount;i++)
+        for (var i=0; i < _config.Nodes.Count; i++)
         {
-            using var channel = GrpcChannel.ForAddress(nodes[i]);
+            using var channel = GrpcChannel.ForAddress(_config.Nodes[i], _dangerousChannelOptions);
 
             var client = new SecretsService.SecretsServiceClient(channel);
 
@@ -32,7 +42,7 @@ public class SecretService:ISecretService
             {
                 Id = splittedSecret.Key,
                 X = ByteString.CopyFrom(splittedSecret.ValueParts[i].X.ToByteArray()),
-                Y= ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray())
+                Y = ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray())
             });
 
             if (reply.IsSuccess)
@@ -50,7 +60,7 @@ public class SecretService:ISecretService
         var successNodesCount = 0;
         foreach (var node in _config.Nodes)
         {
-            using var channel = GrpcChannel.ForAddress(node);
+            using var channel = GrpcChannel.ForAddress(node, _dangerousChannelOptions);
 
             var client = new SecretsService.SecretsServiceClient(channel);
 
@@ -58,6 +68,9 @@ public class SecretService:ISecretService
             {
                 Id = id
             });
+
+            if (reply.IsSuccess)
+                successNodesCount++;
         }
 
         return new Response()
@@ -71,9 +84,9 @@ public class SecretService:ISecretService
         var successNodesCount = 0;
         var nodes = _config.Nodes.ToArray();
 
-        for(var i=0;i< _config.NodesCount;i++)
+        for (var i = 0; i< _config.NodesCount; i++)
         {
-            using var channel = GrpcChannel.ForAddress(nodes[i]);
+            using var channel = GrpcChannel.ForAddress(nodes[i], _dangerousChannelOptions);
 
             var client = new SecretsService.SecretsServiceClient(channel);
 
@@ -88,7 +101,7 @@ public class SecretService:ISecretService
                 successNodesCount++;
         }
 
-        return new Response()
+        return new Response
         {
             SuccessCount = successNodesCount
         };
@@ -101,9 +114,9 @@ public class SecretService:ISecretService
             PartOfSecrets = new List<PartOfSecret>()
         };
 
-        foreach (var node in _config.Nodes)
+        foreach(var node in _config.Nodes)
         {
-            using var channel = GrpcChannel.ForAddress(node);
+            using var channel = GrpcChannel.ForAddress(node, _dangerousChannelOptions);
 
             var client = new SecretsService.SecretsServiceClient(channel);
 
