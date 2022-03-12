@@ -4,8 +4,11 @@ namespace Straonit.HighEdge.Core.Persistence;
 
 public interface IDbContext
 {
-    Task<GetSecretResponse> GetSecretPart(GetSecretRerquest request);
-    Task<Response> CreateSecretPart(CreateSecretRequest request);
-    Task<Response> DeleteSecretPart(DeleteSecretRequest request);
-    Task<Response> UpdateSecretPart(UpdateSecretRequest request);
+    Task<GetSecretResponse> GetSecretPart(GetSecretRequest request);
+
+    Task<bool> CreateSecretPart(CreateSecretRequest request);
+
+    Task DeleteSecretPart(DeleteSecretRequest request);
+
+    Task<bool> UpdateSecretPart(UpdateSecretRequest request);
 }

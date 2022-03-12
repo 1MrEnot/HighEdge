@@ -6,6 +6,7 @@ using OpenTelemetry;
 using OpenTelemetry.Instrumentation.StackExchangeRedis;
 using OpenTelemetry.Trace;
 using StackExchange.Redis;
+using Straonit.HighEdge.Ioc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,14 +28,9 @@ builder.Services.AddSwaggerGen();
 
 var config = builder.Configuration;
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp => ConnectionMultiplexer.Connect(new ConfigurationOptions
-{
-    EndPoints = { $"{config.GetValue<string>("Redis:Host")}:{config.GetValue<int>("Redis:Port")}" },
-    Ssl = true,
-    AbortOnConnectFail = false,
-}));
+builder.Services.AddRedisDatabase(config);
+builder.Services.AddShamirServices();
 
-builder.Services.AddTransient(sp => sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
 //builder.Services.AddTransient(sp => sp.GetRequiredService<StatusChecker>());
 builder.Services.AddTransient<StatusChecker>();
 
