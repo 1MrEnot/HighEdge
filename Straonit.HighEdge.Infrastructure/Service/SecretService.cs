@@ -4,29 +4,41 @@ using Grpc.Net.Client;
 using Secrets.Lib;
 using Straonit.HighEdge.Core.Configuration;
 using Straonit.HighEdge.Core.Distribution;
-using Straonit.HighEdge.Core.SplitSecret;
 using GetSecretResponse = Straonit.HighEdge.Core.Distribution.GetSecretResponse;
 using Response = Straonit.HighEdge.Core.Distribution.Response;
 
 namespace Straonit.HighEdge.Infrastructure.Service;
 
+using Core.SplitSecret;
+
 public class SecretService:ISecretService
 {
     private readonly ClusterConfig _config;
+    private readonly GrpcChannelOptions _dangerousChannelOptions;
     private readonly RollBackConfig _rollBackConfig;
     private readonly IRollBack _rollBackService;
     public SecretService(ClusterConfig config,RollBackConfig rollBackConfig,IRollBack rollBackService) => 
         (_config,_rollBackConfig,_rollBackService)=(config,rollBackConfig,rollBackService);
 
+    public SecretService(ClusterConfig config)
+    {
+        _config = config;
+        var dangerousHandler = new HttpClientHandler();
+        dangerousHandler.ServerCertificateCustomValidationCallback
+            = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+        _dangerousChannelOptions = new GrpcChannelOptions
+        {
+            HttpHandler = dangerousHandler
+        };
+    }
 
     public async Task<Response> CreateSecret(SplittedSecret splittedSecret)
     {
         var successNodesCount = 0;
-        _rollBackConfig.Key = splittedSecret.Key;
 
-        for (var i=0;i< _config.NodesCount;i++)
+        for (var i=0; i < _config.Nodes.Count; i++)
         {
-            using var channel = GrpcChannel.ForAddress(_config.Nodes[i]);
+            using var channel = GrpcChannel.ForAddress("http://" + _config.Nodes[i] + ":82", _dangerousChannelOptions);
 
             var client = new SecretsService.SecretsServiceClient(channel);
 
@@ -34,7 +46,7 @@ public class SecretService:ISecretService
             {
                 Id = splittedSecret.Key,
                 X = ByteString.CopyFrom(splittedSecret.ValueParts[i].X.ToByteArray()),
-                Y= ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray())
+                Y = ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray())
             });
 
             if (!reply.IsSuccess) continue;
@@ -59,7 +71,7 @@ public class SecretService:ISecretService
         var successNodesCount = 0;
         foreach (var node in _config.Nodes)
         {
-            using var channel = GrpcChannel.ForAddress(node);
+            using var channel = GrpcChannel.ForAddress("http://" + node + ":82", _dangerousChannelOptions);
 
             var client = new SecretsService.SecretsServiceClient(channel);
 
@@ -67,6 +79,9 @@ public class SecretService:ISecretService
             {
                 Id = id
             });
+
+            if (reply.IsSuccess)
+                successNodesCount++;
         }
 
         return new Response()
@@ -83,7 +98,8 @@ public class SecretService:ISecretService
 
         for(var i=0;i< _config.NodesCount;i++)
         {
-            using var channel = GrpcChannel.ForAddress(_config.Nodes[i]);
+            
+            using var channel = GrpcChannel.ForAddress("http://"+nodes[i]+":82", _dangerousChannelOptions);
 
             var client = new SecretsService.SecretsServiceClient(channel);
 
@@ -121,7 +137,7 @@ public class SecretService:ISecretService
 
         foreach (var node in _config.Nodes)
         {
-            using var channel = GrpcChannel.ForAddress(node);
+            using var channel = GrpcChannel.ForAddress("http://"+node+":82", _dangerousChannelOptions);
 
             var client = new SecretsService.SecretsServiceClient(channel);
 

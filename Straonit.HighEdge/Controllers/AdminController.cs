@@ -4,9 +4,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Straonit.HighEdge.Core.Configuration;
 
-
 namespace Straonit.HighEdge.Controllers;
-
 
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
@@ -23,10 +21,10 @@ public class AdminController
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly StatusChecker _checker;
 
-    public AdminController(IOptions<ClusterConfig> clusterConfig,
+    public AdminController(ClusterConfig clusterConfig,
         IHttpClientFactory httpClientFactory, StatusChecker checker)
     {        
-        _clusterConfig = clusterConfig.Value;
+        _clusterConfig = clusterConfig;
         _httpClientFactory = httpClientFactory;
         _checker = checker;
     }
@@ -38,7 +36,7 @@ public class AdminController
         var statuses = new List<NodeStatus>(_clusterConfig.Nodes.Count());
         foreach (var node in _clusterConfig.Nodes)
         {
-            var response = await client.GetAsync($"http://{node}:5016/admin/node/status");
+            var response = await client.GetAsync($"http://{node}:80/admin/node/status");
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 statuses.Add(new NodeStatus(node, await response.GetObjectAsync<SelfNodeStatus>()));
@@ -58,8 +56,7 @@ public class AdminController
     [HttpGet("node/status")]
     public async Task<SelfNodeStatus> GetStatus()
     {        
-        var status = await _checker.GetNodeStatusAsync();   
-        System.Console.WriteLine(status.Ram.TotalSize);     
+        var status = await _checker.GetNodeStatusAsync();           
         return status;        
     }
 }

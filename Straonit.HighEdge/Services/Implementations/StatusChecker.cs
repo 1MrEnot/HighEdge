@@ -5,10 +5,12 @@ using Straonit.HighEdge.Core.Configuration;
 
 namespace Straonit.HighEdge.Services.Implementations;
 
-
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Text.RegularExpressions;
-using Models;
+using System.Threading.Tasks;
 using StackExchange.Redis;
+using Straonit.HighEdge.Models;
 
 public class StatusChecker
 {
@@ -38,10 +40,10 @@ public class StatusChecker
         var swapFree = Int32.Parse(Regex.Replace(memoryData[15], @"\s+", " ").Split(' ')[1]);
         return new Ram()
         {
-            TotalSize = total,
-            Free = free,
-            SwapTotalSize = swapTotal,
-            SwappFree = swapFree
+            TotalSize = total / 1024 / 1024,
+            Free = free / 1024 / 1024,
+            SwapTotalSize = swapTotal / 1024 / 1024,
+            SwappFree = swapFree / 1024 / 1024
         };
     }
 
@@ -72,7 +74,7 @@ public class StatusChecker
     }
 
     public async Task<long> GetSecretsCountAsync()
-    {        
+    {
         return await _connection.GetServer(_connection.GetEndPoints().First()).DatabaseSizeAsync();
     }
 
@@ -80,7 +82,7 @@ public class StatusChecker
     {
         return new SelfNodeStatus()
         {
-            Disks = GetDisks(),            
+            Disks = GetDisks(),
             RedisStatus = await GetRedisStatusAsync(),
             Ram = GetRamInfo()
         };

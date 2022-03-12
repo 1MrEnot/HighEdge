@@ -15,7 +15,13 @@ public static class RedisRegistration
         serviceCollection.AddSingleton<IConnectionMultiplexer>(sp =>
         {
             var config = sp.GetRequiredService<IOptions<RedisConfig>>();
-            return ConnectionMultiplexer.Connect(config.Value.ConnectionString);
+            return ConnectionMultiplexer.Connect(
+                new ConfigurationOptions
+                {
+                    EndPoints = { config.Value.ConnectionString },
+                    AbortOnConnectFail = false,
+                    Password = config.Value.Pass
+                });
         });
 
         serviceCollection.AddTransient(sp => sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());

@@ -1,0 +1,8 @@
+{
+    "NodesCount": 2,
+    "RequiredNodesCount": 2,
+    "Nodes":[
+        "10.0.0.3",
+        "10.0.0.5"
+    ]
+}
