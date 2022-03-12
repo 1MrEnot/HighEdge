@@ -1,10 +1,8 @@
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-using hackation_high_edge.Extensions;
-using hackation_high_edge.Models;
-using StackExchange.Redis;
+namespace Straonit.HighEdge.Services.Implementations;
 
-namespace hackation_high_edge.Service;
+using System.Text.RegularExpressions;
+using Models;
+using StackExchange.Redis;
 
 public class StatusChecker
 {

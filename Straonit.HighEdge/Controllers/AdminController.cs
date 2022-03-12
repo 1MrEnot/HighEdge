@@ -1,10 +1,8 @@
-using System.Net;
-using hackation_high_edge.Extensions;
-using hackation_high_edge.Models;
-using hackation_high_edge.Service;
-using Microsoft.AspNetCore.Mvc;
+namespace Straonit.HighEdge.Controllers;
 
-namespace hackation_high_edge.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using Models;
+using Services.Implementations;
 
 [ApiController]
 [Route("[controller]")]

@@ -1,4 +1,4 @@
-namespace hackation_high_edge.Models;
+namespace Straonit.HighEdge.Models;
 
 public class Ram
 {

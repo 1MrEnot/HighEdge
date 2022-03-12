@@ -4,17 +4,23 @@
     <projectFile profileName="Straonit.HighEdge">Straonit.HighEdge/Straonit.HighEdge.csproj</projectFile>
     <projectFile profileName="IIS Express">Straonit.HighEdge/Straonit.HighEdge.csproj</projectFile>
   </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="f39caf8a-a77e-4453-88b0-cd947b32b372" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Service/SecretService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Redis/RedisDbContext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Redis/RedisPointModel.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Straonit.HighEdge.Infrastructure.csproj.DotSettings" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.HighEdge/.idea/.name" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HighEdge/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HighEdge/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/ISecretService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/ISecretService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/CreateSecretRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/CreateSecretRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/UpdateSecretRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/UpdateSecretRequest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/GetSecretRerquest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/GetSecretRequest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Responses/GetSecretResponse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Responses/GetSecretResponse.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Contexts/RedisDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Contexts/RedisDbContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Protos/Secret.proto" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Protos/Secret.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Persistence/IDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Persistence/IDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Straonit.HighEdge.Core.csproj.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Straonit.HighEdge.Core.csproj.DotSettings" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Contexts/RedisDbContext.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Straonit.HighEdge.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Straonit.HighEdge.Infrastructure.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge/Straonit.HighEdge.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge/Straonit.HighEdge.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +33,7 @@
   <component name="ProjectId" id="26HUbwuPRU8SCyiq1LNe0nIkcSn" />
   <component name="ProjectLevelVcsManager">
     <OptionsSetting value="false" id="Update" />
+    <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -35,7 +42,12 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="application.passwordSafe" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
@@ -72,6 +84,17 @@
     </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f39caf8a-a77e-4453-88b0-cd947b32b372" name="Changes" comment="" />
+      <created>1647099893045</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1647099893045</updated>
+      <workItem from="1647099900855" duration="1230000" />
+    </task>
+    <servers />
+  </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>

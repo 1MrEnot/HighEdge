@@ -1,12 +1,7 @@
 using System.Text.Json;
-using hackation_high_edge;
-using hackation_high_edge.Models;
-using hackation_high_edge.Service;
-using OpenTelemetry;
-using OpenTelemetry.Instrumentation.StackExchangeRedis;
-using OpenTelemetry.Trace;
-using StackExchange.Redis;
 using Straonit.HighEdge.Ioc;
+using Straonit.HighEdge.Models;
+using Straonit.HighEdge.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
