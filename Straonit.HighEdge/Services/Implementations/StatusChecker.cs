@@ -50,25 +50,33 @@ public class StatusChecker
     public async Task<ServiceStatus> GetRedisStatusAsync()
     {
         ServiceStatus status;
-        if (_connection.IsConnected)
+        try
         {
-            var pong = await _connection.GetDatabase().PingAsync();
-            if (pong.Milliseconds < 100)
+            if (_connection.IsConnected)
             {
-                status = ServiceStatus.Ok;
+                var pong = await _connection.GetDatabase().PingAsync();
+                if (pong.Milliseconds < 100)
+                {
+                    status = ServiceStatus.Ok;
+                }
+                else
+                {
+                    status = ServiceStatus.HighPing;
+                }
+            }
+            else if (_connection.IsConnecting)
+            {
+                status = ServiceStatus.Connecting;
             }
             else
             {
-                status = ServiceStatus.HighPing;
+                status = ServiceStatus.Unavailable;
             }
         }
-        else if (_connection.IsConnecting)
-        {
-            status = ServiceStatus.Connecting;
-        }
-        else
+        catch (Exception ex)
         {
             status = ServiceStatus.Unavailable;
+            System.Console.WriteLine("Redis ex:" + ex.Message);
         }
         return status;
     }

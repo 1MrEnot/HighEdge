@@ -43,6 +43,8 @@ builder.Services.AddTransient<DistributedSecretSerivce>();
 builder.Services.AddHttpClient();
 builder.Services.AddGrpc();
 
+// builder.Services.AddControllersWithViews();
+
 AppContext.SetSwitch(
     "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
@@ -63,6 +65,9 @@ builder.WebHost.ConfigureKestrel(options =>
 
 var app = builder.Build();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -76,6 +81,8 @@ app.UseAuthorization();
 app.MapGrpcService<GrpcServer>();
 
 app.MapControllers();
+
+
 
 //app.Urls.Add("http://"+Environment.GetEnvironmentVariable("LOCAL_IP") + ":8080");
 

@@ -2,20 +2,15 @@ version: "3.9"
 services:
   redis0:
     image: "redis:alpine"
-    command: redis-server --requirepass s3cr3tP@ssw0rd
-    # ports:
-    #   - "6379:6379" 
+    command: redis-server --requirepass s3cr3tP@ssw0rd    
     networks:        
       local:
         ipv4_address: 10.0.0.2   
   app0:
-    build: .  
-    #image: localhost/sb
+    build: .      
     networks:        
       local:
         ipv4_address: 10.0.0.3             
-    # ports:
-    #   - "8080:8080"
     volumes:
       - /home/v-user/Desktop/HighEdge/Straonit.HighEdge/Config/:/etc/secret-cluster/
     depends_on:
@@ -30,20 +25,15 @@ services:
   
   redis1:
     image: "redis:alpine"
-    command: redis-server --requirepass s3cr3tP@ssw0rd
-    # ports:
-    #   - "6379:6379"    
+    command: redis-server --requirepass s3cr3tP@ssw0rd      
     networks:        
       local:
         ipv4_address: 10.0.0.4   
   app1:
-    build: .    
-    #image: localhost/sb
+    build: .        
     networks:        
       local:
-        ipv4_address: 10.0.0.5           
-    # ports:
-    #   - "8080:8080"
+        ipv4_address: 10.0.0.5              
     volumes:
       - /home/v-user/Desktop/HighEdge/Straonit.HighEdge/Config/:/etc/secret-cluster/
     depends_on:
@@ -53,6 +43,75 @@ services:
       - NODE_UID=1
       - LOCAL_IP=10.0.0.5
       - REDIS__HOST=10.0.0.4
+      - REDIS__PORT=6379
+      - CLUSTER_CONFIG=/etc/secret-cluster/config.json
+
+  redis2:
+    image: "redis:alpine"
+    command: redis-server --requirepass s3cr3tP@ssw0rd    
+    networks:        
+      local:
+        ipv4_address: 10.0.0.6   
+  app2:
+    build: .        
+    networks:        
+      local:
+        ipv4_address: 10.0.0.7           
+    volumes:
+      - /home/v-user/Desktop/HighEdge/Straonit.HighEdge/Config/:/etc/secret-cluster/
+    depends_on:
+      - redis1
+    environment:
+      - REDIS__PASS=s3cr3tP@ssw0rd
+      - NODE_UID=1
+      - LOCAL_IP=10.0.0.7
+      - REDIS__HOST=10.0.0.6
+      - REDIS__PORT=6379
+      - CLUSTER_CONFIG=/etc/secret-cluster/config.json
+
+  redis3:
+    image: "redis:alpine"
+    command: redis-server --requirepass s3cr3tP@ssw0rd    
+    networks:        
+      local:
+        ipv4_address: 10.0.0.8   
+  app3:
+    build: .        
+    networks:        
+      local:
+        ipv4_address: 10.0.0.9         
+    volumes:
+      - /home/v-user/Desktop/HighEdge/Straonit.HighEdge/Config/:/etc/secret-cluster/
+    depends_on:
+      - redis1
+    environment:
+      - REDIS__PASS=s3cr3tP@ssw0rd
+      - NODE_UID=1
+      - LOCAL_IP=10.0.0.9
+      - REDIS__HOST=10.0.0.8
+      - REDIS__PORT=6379
+      - CLUSTER_CONFIG=/etc/secret-cluster/config.json
+  
+  redis4:
+    image: "redis:alpine"
+    command: redis-server --requirepass s3cr3tP@ssw0rd    
+    networks:        
+      local:
+        ipv4_address: 10.0.0.10   
+  app4:
+    build: .        
+    networks:        
+      local:
+        ipv4_address: 10.0.0.11         
+    volumes:
+      - /home/v-user/Desktop/HighEdge/Straonit.HighEdge/Config/:/etc/secret-cluster/
+    depends_on:
+      - redis1
+    environment:
+      - REDIS__PASS=s3cr3tP@ssw0rd
+      - NODE_UID=1
+      - LOCAL_IP=10.0.0.11
+      - REDIS__HOST=10.0.0.10
       - REDIS__PORT=6379
       - CLUSTER_CONFIG=/etc/secret-cluster/config.json
 

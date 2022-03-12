@@ -8,7 +8,6 @@ namespace Straonit.HighEdge.Controllers;
 
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Models;
 using Services.Implementations;
 using Straonit.HighEdge.Extensions;
@@ -23,7 +22,7 @@ public class AdminController
 
     public AdminController(ClusterConfig clusterConfig,
         IHttpClientFactory httpClientFactory, StatusChecker checker)
-    {        
+    {
         _clusterConfig = clusterConfig;
         _httpClientFactory = httpClientFactory;
         _checker = checker;
@@ -36,17 +35,25 @@ public class AdminController
         var statuses = new List<NodeStatus>(_clusterConfig.Nodes.Count());
         foreach (var node in _clusterConfig.Nodes)
         {
-            var response = await client.GetAsync($"http://{node}:80/admin/node/status");
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                statuses.Add(new NodeStatus(node, await response.GetObjectAsync<SelfNodeStatus>()));
+                var response = await client.GetAsync($"http://{node}:80/admin/node/status");
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    statuses.Add(new NodeStatus(node, await response.GetObjectAsync<SelfNodeStatus>()));
+                }
+                else
+                {
+                    statuses.Add(NodeStatus.CreateFailedStatus(node));
+                }
             }
-            else
+            catch (Exception ex)
             {
                 statuses.Add(NodeStatus.CreateFailedStatus(node));
             }
         }
-        var clusterStatus = new ClusterStatus(){
+        var clusterStatus = new ClusterStatus()
+        {
             NodesStatuses = statuses,
             SecretsCount = await _checker.GetSecretsCountAsync()
         };
@@ -55,8 +62,8 @@ public class AdminController
 
     [HttpGet("node/status")]
     public async Task<SelfNodeStatus> GetStatus()
-    {        
-        var status = await _checker.GetNodeStatusAsync();           
-        return status;        
+    {
+        var status = await _checker.GetNodeStatusAsync();
+        return status;
     }
 }
