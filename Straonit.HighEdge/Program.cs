@@ -6,6 +6,7 @@ using OpenTelemetry;
 using OpenTelemetry.Instrumentation.StackExchangeRedis;
 using OpenTelemetry.Trace;
 using StackExchange.Redis;
+using Straonit.HighEdge.Core.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

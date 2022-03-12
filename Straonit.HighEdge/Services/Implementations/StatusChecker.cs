@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using hackation_high_edge.Extensions;
 using hackation_high_edge.Models;
 using StackExchange.Redis;
+using Straonit.HighEdge.Core.Configuration;
 
 namespace hackation_high_edge.Service;
 
