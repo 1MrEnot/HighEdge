@@ -38,6 +38,7 @@ System.Console.WriteLine(clusterConfigJson);
 var clusterConfig = JsonSerializer.Deserialize<ClusterConfig>(clusterConfigJson);
 System.Console.WriteLine(clusterConfig.Nodes.Count);
 builder.Services.AddSingleton<ClusterConfig>(clusterConfig);
+builder.Services.AddSingleton<RollBackConfig>();
 builder.Services.AddTransient<DistributedSecretSerivce>();
 
 builder.Services.AddHttpClient();
