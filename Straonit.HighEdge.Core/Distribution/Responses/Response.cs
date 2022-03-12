@@ -2,5 +2,5 @@ namespace Straonit.HighEdge.Core.Distribution;
 
 public class Response
 {
-    public string Message { get; set; }
+    public int SuccessCount { get; set; }
 }

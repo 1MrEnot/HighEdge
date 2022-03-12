@@ -26,7 +26,7 @@ public class GrpcServer:SecretsService.SecretsServiceBase
         
         return new Response()
         {
-            Message = response.Message
+            Message = response.
         };
     }
 
