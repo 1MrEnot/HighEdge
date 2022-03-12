@@ -4,7 +4,7 @@ using System.Numerics;
 
 public class PartOfSecret
 {
-    public PartOfSecret(int x, BigInteger y)
+    public PartOfSecret(BigInteger x, BigInteger y)
     {
         X = x;
         Y = y;

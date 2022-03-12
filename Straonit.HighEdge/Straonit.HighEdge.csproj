@@ -11,4 +11,10 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Straonit.HighEdge.Core\Straonit.HighEdge.Core.csproj" />
+      <ProjectReference Include="..\Straonit.HighEdge.Infrastructure\Straonit.HighEdge.Infrastructure.csproj" />
+      <ProjectReference Include="..\Straonit.HighEdge.Secret\Straonit.HighEdge.Secret.csproj" />
+    </ItemGroup>
+
 </Project>
