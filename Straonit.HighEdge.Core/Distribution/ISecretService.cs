@@ -1,6 +1,6 @@
-﻿using Straonit.HighEdge.Core.Secret;
+﻿namespace Straonit.HighEdge.Core.Distribution;
 
-namespace Straonit.HighEdge.Core.Distribution;
+using SplitSecret;
 
 public interface ISecretService
 {

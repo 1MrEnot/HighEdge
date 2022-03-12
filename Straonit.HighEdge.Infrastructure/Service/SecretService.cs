@@ -1,12 +1,12 @@
 using Grpc.Net.Client;
 using Secrets.Lib;
 using Straonit.HighEdge.Core.Distribution;
-using Straonit.HighEdge.Core.Secret;
 using GetSecretResponse = Straonit.HighEdge.Core.Distribution.GetSecretResponse;
 using Response = Straonit.HighEdge.Core.Distribution.Response;
 
 namespace Straonit.HighEdge.Infrastructure.Service;
 
+using Core.SplitSecret;
 
 public class SecretService:ISecretService
 {
