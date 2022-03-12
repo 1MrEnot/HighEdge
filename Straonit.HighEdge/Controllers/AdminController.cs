@@ -10,6 +10,7 @@ namespace Straonit.HighEdge.Controllers;
 
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Models;
 using Services.Implementations;
 using Straonit.HighEdge.Extensions;
@@ -18,13 +19,14 @@ using Straonit.HighEdge.Extensions;
 [Route("[controller]")]
 public class AdminController
 {
-    private ClusterConfig _clusterConfig;
-    private IHttpClientFactory _httpClientFactory;
-    private StatusChecker _checker;
+    private readonly ClusterConfig _clusterConfig;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly StatusChecker _checker;
 
-    public AdminController(ClusterConfig clusterConfig, IHttpClientFactory httpClientFactory, StatusChecker checker)
+    public AdminController(IOptions<ClusterConfig> clusterConfig,
+        IHttpClientFactory httpClientFactory, StatusChecker checker)
     {        
-        _clusterConfig = clusterConfig;
+        _clusterConfig = clusterConfig.Value;
         _httpClientFactory = httpClientFactory;
         _checker = checker;
     }
