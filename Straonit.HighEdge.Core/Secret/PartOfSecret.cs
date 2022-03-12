@@ -10,7 +10,7 @@ public class PartOfSecret
         Y = y;
     }
 
-    public int X { get; }
+    public BigInteger X { get; }
 
     public BigInteger Y { get; }
 }
