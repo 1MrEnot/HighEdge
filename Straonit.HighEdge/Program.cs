@@ -1,4 +1,8 @@
+using System;
+using System.IO;
 using System.Text.Json;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Straonit.HighEdge.Ioc;
 using Straonit.HighEdge.Models;
 using Straonit.HighEdge.Services.Implementations;
@@ -8,18 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-// var connection = ConnectionMultiplexer.Connect("localhost:6379");
-
-// builder.Services.AddOpenTelemetryTracing(builder =>
-// {
-//     builder.AddAspNetCoreInstrumentation()                
-//         .AddRedisInstrumentation(connection);
-
-// }).AddConsoleExporter();
 
 var config = builder.Configuration;
 
@@ -29,8 +23,8 @@ builder.Services.AddShamirServices();
 //builder.Services.AddTransient(sp => sp.GetRequiredService<StatusChecker>());
 builder.Services.AddTransient<StatusChecker>();
 
-Environment.SetEnvironmentVariable("ClusterConfig", "/home/v-user/Desktop/HighEdge/Straonit.HighEdge/config.json");
-var clusterConfigJson = File.ReadAllText(Environment.GetEnvironmentVariable("ClusterConfig"));
+// Environment.SetEnvironmentVariable("CLUSTER_CONFIG", "/home/v-user/Desktop/HighEdge/Straonit.HighEdge/config.json");
+var clusterConfigJson = File.ReadAllText(Environment.GetEnvironmentVariable("CLUSTER_CONFIG"));
 //System.Console.WriteLine("Cluster config JSON: "+clusterConfigJson);
 var clusterConfig = JsonSerializer.Deserialize<ClusterConfig>(clusterConfigJson);
 //System.Console.WriteLine(clusterConfig.NodesCount);
