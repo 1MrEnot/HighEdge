@@ -38,6 +38,7 @@ builder.Services.AddTransient<ISecretService, SecretService>();
 var clusterConfigJson = File.ReadAllText(@"C:\Users\Max\RiderProjects\HighEdge\Straonit.HighEdge\config.json");
 var clusterConfig = JsonSerializer.Deserialize<ClusterConfig>(clusterConfigJson);
 builder.Services.AddSingleton<ClusterConfig>(clusterConfig);
+builder.Services.AddSingleton<RollBackConfig>();
 builder.Services.AddTransient<DistributedSecretSerivce>();
 
 builder.Services.AddHttpClient();

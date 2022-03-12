@@ -4,7 +4,7 @@ using Grpc.Net.Client;
 using Secrets.Lib;
 using Straonit.HighEdge.Core.Configuration;
 using Straonit.HighEdge.Core.Distribution;
-using Straonit.HighEdge.Core.Secret;
+using Straonit.HighEdge.Core.SplitSecret;
 using GetSecretResponse = Straonit.HighEdge.Core.Distribution.GetSecretResponse;
 using Response = Straonit.HighEdge.Core.Distribution.Response;
 
@@ -13,17 +13,20 @@ namespace Straonit.HighEdge.Infrastructure.Service;
 public class SecretService:ISecretService
 {
     private readonly ClusterConfig _config;
-    public SecretService(ClusterConfig config) => (_config)=(config);
+    private readonly RollBackConfig _rollBackConfig;
+    private readonly IRollBack _rollBackService;
+    public SecretService(ClusterConfig config,RollBackConfig rollBackConfig,IRollBack rollBackService) => 
+        (_config,_rollBackConfig,_rollBackService)=(config,rollBackConfig,rollBackService);
 
 
     public async Task<Response> CreateSecret(SplittedSecret splittedSecret)
     {
         var successNodesCount = 0;
-        var nodes = _config.Nodes.ToArray();
+        _rollBackConfig.Key = splittedSecret.Key;
 
         for (var i=0;i< _config.NodesCount;i++)
         {
-            using var channel = GrpcChannel.ForAddress(nodes[i]);
+            using var channel = GrpcChannel.ForAddress(_config.Nodes[i]);
 
             var client = new SecretsService.SecretsServiceClient(channel);
 
@@ -34,9 +37,17 @@ public class SecretService:ISecretService
                 Y= ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray())
             });
 
-            if (reply.IsSuccess) successNodesCount++;
+            if (!reply.IsSuccess) continue;
+            
+            _rollBackConfig.RollBackNodes.Add(_config.Nodes[i]);
+            successNodesCount++;
         }
-        
+
+        if (successNodesCount < _config.RequiredNodesCount)
+        {
+            await _rollBackService.RollBackCreate();
+        }
+
         return new Response()
         {
             SuccessCount = successNodesCount
@@ -67,11 +78,12 @@ public class SecretService:ISecretService
     public async Task<Response> UpdateSecret(SplittedSecret splittedSecret)
     {
         var successNodesCount = 0;
-        var nodes = _config.Nodes.ToArray();
+        _rollBackConfig.Key = splittedSecret.Key;
+        var oldValueParts = new List<OldValue>();
 
         for(var i=0;i< _config.NodesCount;i++)
         {
-            using var channel = GrpcChannel.ForAddress(nodes[i]);
+            using var channel = GrpcChannel.ForAddress(_config.Nodes[i]);
 
             var client = new SecretsService.SecretsServiceClient(channel);
 
@@ -82,7 +94,19 @@ public class SecretService:ISecretService
                 Y = ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray()),
             });
 
-            if (reply.IsSuccess) successNodesCount++;
+            if (!reply.IsSuccess) continue; 
+            
+            successNodesCount++;
+            oldValueParts.Add(new OldValue()
+            {
+                PartOfSecret = splittedSecret.ValueParts[i],
+                Node = _config.Nodes[i]
+            });
+        }
+        
+        if (successNodesCount < _config.RequiredNodesCount)
+        {
+            await _rollBackService.RollBackUpdate(oldValueParts);
         }
 
         return new Response()

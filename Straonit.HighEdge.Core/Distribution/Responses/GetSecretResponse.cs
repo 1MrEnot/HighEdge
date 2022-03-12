@@ -1,4 +1,4 @@
-using Straonit.HighEdge.Core.Secret;
+using Straonit.HighEdge.Core.SplitSecret;
 
 namespace Straonit.HighEdge.Core.Distribution;
 
