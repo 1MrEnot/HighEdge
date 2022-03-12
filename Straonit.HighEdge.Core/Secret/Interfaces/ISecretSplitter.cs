@@ -2,5 +2,5 @@
 
 public interface ISecretSplitter
 {
-    SplittedSecret SplitSecret(SecretWithKey secret);
+    SplittedSecret SplitSecret(SplittingRequest splittingRequest);
 }
