@@ -26,26 +26,26 @@ public class GrpcServer:SecretsService.SecretsServiceBase
         
         return new Response()
         {
-            Message = response.
+            IsSuccess = response
         };
     }
 
     public override async Task<Response> DeleteSecret(DeleteSecretMessage request, ServerCallContext context)
     {
-        var response = await _context.DeleteSecretPart(new DeleteSecretRequest()
+         await _context.DeleteSecretPart(new DeleteSecretRequest()
         {
             Id = request.Id,
         });
         
         return new Response()
         {
-            Message = response.Message
+            IsSuccess = true
         };
     }
 
     public override async Task<GetSecretResponse> GetSecret(GetSecretMessage request, ServerCallContext context)
     {
-        var response = await _context.GetSecretPart(new GetSecretRerquest()
+        var response = await _context.GetSecretPart(new GetSecretRequest()
         {
             Id = request.Id,
         });
@@ -68,7 +68,7 @@ public class GrpcServer:SecretsService.SecretsServiceBase
         
         return new Response()
         {
-            Message = response.Message
+            IsSuccess = response
         };
     }
 }
