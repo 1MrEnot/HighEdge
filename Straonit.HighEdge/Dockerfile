@@ -22,4 +22,4 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine3.15
 COPY bin/Debug/net6.0/publish App/
 WORKDIR /App
-ENTRYPOINT ["dotnet", "Straonit.HighEdge.dll", "--urls=http://localhost:8080/"]
+ENTRYPOINT ["dotnet", "Straonit.HighEdge.dll"]

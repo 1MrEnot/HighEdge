@@ -16,15 +16,20 @@
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:7016;http://localhost:5016",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "POSTGRES__SERVER": "127.0.0.1",
+        "REDIS__HOST": "localhost",
+        "REDIS__PORT": "6379"
       }
     },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
+    "Straonit.HighEdge2": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7017;http://localhost:5017",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "REDIS__HOST": "localhost",
+        "REDIS__PORT": "6380"
       }
     }
   }

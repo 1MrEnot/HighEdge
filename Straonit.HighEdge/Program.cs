@@ -1,15 +1,23 @@
 using System;
 using System.IO;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Straonit.HighEdge.Core;
+using Straonit.HighEdge.Core.Configuration;
+using Straonit.HighEdge.Core.Distribution;
+using Straonit.HighEdge.Infrastructure.Grpc;
+using Straonit.HighEdge.Infrastructure.Service;
 using Straonit.HighEdge.Ioc;
-using Straonit.HighEdge.Models;
 using Straonit.HighEdge.Services.Implementations;
 
-var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -22,15 +30,36 @@ builder.Services.AddShamirServices();
 
 //builder.Services.AddTransient(sp => sp.GetRequiredService<StatusChecker>());
 builder.Services.AddTransient<StatusChecker>();
+builder.Services.AddTransient<ISecretService, SecretService>();
 
-// Environment.SetEnvironmentVariable("CLUSTER_CONFIG", "/home/v-user/Desktop/HighEdge/Straonit.HighEdge/config.json");
+
 var clusterConfigJson = File.ReadAllText(Environment.GetEnvironmentVariable("CLUSTER_CONFIG"));
-//System.Console.WriteLine("Cluster config JSON: "+clusterConfigJson);
+System.Console.WriteLine(clusterConfigJson);
 var clusterConfig = JsonSerializer.Deserialize<ClusterConfig>(clusterConfigJson);
-//System.Console.WriteLine(clusterConfig.NodesCount);
+System.Console.WriteLine(clusterConfig.Nodes.Count);
 builder.Services.AddSingleton<ClusterConfig>(clusterConfig);
+builder.Services.AddTransient<DistributedSecretSerivce>();
 
 builder.Services.AddHttpClient();
+builder.Services.AddGrpc();
+
+AppContext.SetSwitch(
+    "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+
+
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Listen(IPAddress.Any, 80, listenOptions =>
+    {
+        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;        
+    });
+
+    options.Listen(IPAddress.Any, 82, listenOptions =>
+    {
+        listenOptions.Protocols = HttpProtocols.Http2;
+    });
+});
 
 var app = builder.Build();
 
@@ -41,11 +70,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.MapGrpcService<GrpcServer>();
 
 app.MapControllers();
+
+//app.Urls.Add("http://"+Environment.GetEnvironmentVariable("LOCAL_IP") + ":8080");
 
 app.Run();
 

@@ -21,8 +21,11 @@ services:
     depends_on:
       - redis0
     environment:
-      - REDIS_PASS=s3cr3tP@ssw0rd
+      - REDIS__PASS=s3cr3tP@ssw0rd
       - NODE_UID=0
+      - LOCAL_IP=10.0.0.3
+      - REDIS__HOST=10.0.0.2
+      - REDIS__PORT=6379
       - CLUSTER_CONFIG=/etc/secret-cluster/config.json
   
   redis1:
@@ -46,8 +49,11 @@ services:
     depends_on:
       - redis1
     environment:
-      - REDIS_PASS=s3cr3tP@ssw0rd
+      - REDIS__PASS=s3cr3tP@ssw0rd
       - NODE_UID=1
+      - LOCAL_IP=10.0.0.5
+      - REDIS__HOST=10.0.0.4
+      - REDIS__PORT=6379
       - CLUSTER_CONFIG=/etc/secret-cluster/config.json
 
 networks:

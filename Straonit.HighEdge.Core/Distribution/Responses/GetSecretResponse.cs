@@ -1,17 +1,8 @@
 namespace Straonit.HighEdge.Core.Distribution;
 
+using SplitSecret;
+
 public class GetSecretResponse
 {
-    public GetSecretResponse(string id, byte[] x, byte[] y)
-    {
-        Id = id;
-        X = x;
-        Y = y;
-    }
-
-    public string Id { get; }
-
-    public byte[] X { get; }
-
-    public byte[] Y { get; }
+    public List<PartOfSecret> PartOfSecrets { get; set; }
 }

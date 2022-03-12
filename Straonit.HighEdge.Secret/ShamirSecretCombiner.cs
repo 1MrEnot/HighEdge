@@ -1,11 +1,11 @@
 ﻿namespace Straonit.HighEdge.Secret;
 
 using System.Numerics;
-using Core.Secret;
+using Core.SplitSecret;
 using SecretSharingDotNet.Cryptography;
 using SecretSharingDotNet.Math;
 
-public class ShamirSecretCombiner : ISecretMerger
+public class ShamirSecretCombiner : ISecretCombiner
 {
     private readonly ShamirsSecretSharing<BigInteger> _combiner;
 
@@ -15,7 +15,7 @@ public class ShamirSecretCombiner : ISecretMerger
         _combiner = new ShamirsSecretSharing<BigInteger>(gcd);
     }
 
-    public SecretWithKey MergeSecret(SplittedSecret splittedSecret)
+    public SecretWithKey CombineSecret(SplittedSecret splittedSecret)
     {
         var pointForRecreating = splittedSecret.ValueParts
             .Select(PointFromSecretPart);

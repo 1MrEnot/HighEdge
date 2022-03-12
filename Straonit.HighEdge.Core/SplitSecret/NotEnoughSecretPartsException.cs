@@ -1,4 +1,4 @@
-﻿namespace Straonit.HighEdge.Core.Secret;
+﻿namespace Straonit.HighEdge.Core.SplitSecret;
 
 using System.Runtime.Serialization;
 

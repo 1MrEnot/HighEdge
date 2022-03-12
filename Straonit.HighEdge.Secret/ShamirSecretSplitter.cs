@@ -1,7 +1,7 @@
 ﻿namespace Straonit.HighEdge.Secret;
 
 using System.Numerics;
-using Core.Secret;
+using Core.SplitSecret;
 using SecretSharingDotNet.Cryptography;
 using SecretSharingDotNet.Math;
 

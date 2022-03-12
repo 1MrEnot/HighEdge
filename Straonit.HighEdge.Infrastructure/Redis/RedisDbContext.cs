@@ -16,11 +16,11 @@ public class RedisDbContext : IDbContext
         _serializer = new ProtobufSerializer();
     }
     
-    public async Task<GetSecretResponse> GetSecretPart(GetSecretRequest request)
+    public async Task<GetSecretPartResponse> GetSecretPart(GetSecretRequest request)
     {
         var secret = await _database.StringGetAsync(request.Id);
         var pointModel = _serializer.Deserialize<RedisPointModel>(secret);
-        return new GetSecretResponse(request.Id, pointModel.X, pointModel.Y);
+        return new GetSecretPartResponse(request.Id, pointModel.X, pointModel.Y);
     }
 
     public async Task<bool> CreateSecretPart(CreateSecretRequest request)
