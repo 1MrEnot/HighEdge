@@ -3,5 +3,6 @@
 public class CreateSecretRequest
 {
     public string Id { get; set; }
-    public string SecretPart { get; set; }
+    public int X { get; set; }
+    public byte[] Y { get; set; }
 }
