@@ -38,21 +38,28 @@ public class SecretService:ISecretService
 
         for (var i=0; i < _config.Nodes.Count; i++)
         {
-            using var channel = GrpcChannel.ForAddress("http://" + _config.Nodes[i] + ":82", _dangerousChannelOptions);
-
-            var client = new SecretsService.SecretsServiceClient(channel);
-
-            var reply = await client.CreateSecretAsync(new CreateSecretMessage()
+            try
             {
-                Id = splittedSecret.Key,
-                X = ByteString.CopyFrom(splittedSecret.ValueParts[i].X.ToByteArray()),
-                Y = ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray())
-            });
+                using var channel =
+                    GrpcChannel.ForAddress("http://" + _config.Nodes[i] + ":82", _dangerousChannelOptions);
 
-            if (!reply.IsSuccess) continue;
-            
-            _rollBackConfig.RollBackNodes.Add(_config.Nodes[i]);
-            successNodesCount++;
+                var client = new SecretsService.SecretsServiceClient(channel);
+
+                var reply = await client.CreateSecretAsync(new CreateSecretMessage()
+                {
+                    Id = splittedSecret.Key,
+                    X = ByteString.CopyFrom(splittedSecret.ValueParts[i].X.ToByteArray()),
+                    Y = ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray())
+                },deadline:DateTime.UtcNow.AddSeconds(0.5));
+
+                if (!reply.IsSuccess) continue;
+
+                _rollBackConfig.RollBackNodes.Add(_config.Nodes[i]);
+                successNodesCount++;
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
         if (successNodesCount < _config.RequiredNodesCount)
@@ -71,17 +78,25 @@ public class SecretService:ISecretService
         var successNodesCount = 0;
         foreach (var node in _config.Nodes)
         {
-            using var channel = GrpcChannel.ForAddress("http://" + node + ":82", _dangerousChannelOptions);
-
-            var client = new SecretsService.SecretsServiceClient(channel);
-
-            var reply = await client.DeleteSecretAsync(new DeleteSecretMessage()
+            try
             {
-                Id = id
-            });
+                using var channel = GrpcChannel.ForAddress("http://" + node + ":82", _dangerousChannelOptions);
 
-            if (reply.IsSuccess)
-                successNodesCount++;
+                var client = new SecretsService.SecretsServiceClient(channel);
+
+                var reply = await client.DeleteSecretAsync(new DeleteSecretMessage()
+                {
+                    Id = id
+                },deadline:DateTime.UtcNow.AddSeconds(0.5));
+
+                if (reply.IsSuccess)
+                    successNodesCount++;
+            }
+            catch
+            {
+            }
+
+
         }
 
         return new Response()
@@ -98,26 +113,34 @@ public class SecretService:ISecretService
 
         for(var i=0;i< _config.NodesCount;i++)
         {
-            
-            using var channel = GrpcChannel.ForAddress("http://"+nodes[i]+":82", _dangerousChannelOptions);
-
-            var client = new SecretsService.SecretsServiceClient(channel);
-
-            var reply = await client.PutSecretAsync(new PutSecretMessage()
+            try
             {
-                Id = splittedSecret.Key,
-                X = ByteString.CopyFrom(splittedSecret.ValueParts[i].X.ToByteArray()),
-                Y = ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray()),
-            });
+                using var channel =
+                    GrpcChannel.ForAddress("http://" + _config.Nodes[i] + ":82", _dangerousChannelOptions);
 
-            if (!reply.IsSuccess) continue; 
-            
-            successNodesCount++;
-            oldValueParts.Add(new OldValue()
+                var client = new SecretsService.SecretsServiceClient(channel);
+
+                var reply = await client.PutSecretAsync(new PutSecretMessage()
+                {
+                    Id = splittedSecret.Key,
+                    X = ByteString.CopyFrom(splittedSecret.ValueParts[i].X.ToByteArray()),
+                    Y = ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray()),
+                },deadline:DateTime.UtcNow.AddSeconds(0.5));
+
+                if (!reply.IsSuccess) continue;
+
+                successNodesCount++;
+                oldValueParts.Add(new OldValue()
+                {
+                    PartOfSecret = splittedSecret.ValueParts[i],
+                    Node = _config.Nodes[i]
+                });
+            }
+            catch
             {
-                PartOfSecret = splittedSecret.ValueParts[i],
-                Node = _config.Nodes[i]
-            });
+            }
+
+
         }
         
         if (successNodesCount < _config.RequiredNodesCount)
@@ -137,16 +160,24 @@ public class SecretService:ISecretService
 
         foreach (var node in _config.Nodes)
         {
-            using var channel = GrpcChannel.ForAddress("http://"+node+":82", _dangerousChannelOptions);
-
-            var client = new SecretsService.SecretsServiceClient(channel);
-
-            var reply = await client.GetSecretAsync(new GetSecretMessage()
+            try
             {
-                Id = id
-            });
+                using var channel = GrpcChannel.ForAddress("http://" + node + ":82", _dangerousChannelOptions);
 
-            response.PartOfSecrets.Add(new PartOfSecret(new BigInteger(reply.X.ToByteArray()),new BigInteger(reply.Y.ToByteArray())));
+                var client = new SecretsService.SecretsServiceClient(channel);
+
+                var reply = await client.GetSecretAsync(new GetSecretMessage()
+                {
+                    Id = id
+                },deadline:DateTime.UtcNow.AddSeconds(0.5));
+
+                response.PartOfSecrets.Add(new PartOfSecret(new BigInteger(reply.X.ToByteArray()),
+                    new BigInteger(reply.Y.ToByteArray())));
+            }
+            catch (Exception ex)
+            {
+                // ignored
+            }
         }
 
         return response;

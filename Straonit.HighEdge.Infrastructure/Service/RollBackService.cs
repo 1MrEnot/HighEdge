@@ -17,16 +17,22 @@ public class RollBackService:IRollBack
     {
         foreach (var oldValue in oldValues)
         {
-            using var channel = GrpcChannel.ForAddress(oldValue.Node);
-
-            var client = new SecretsService.SecretsServiceClient(channel);
-
-            await client.PutSecretAsync(new PutSecretMessage()
+            try
             {
-                Id = _rollBackConfig.Key,
-                X = ByteString.CopyFrom(oldValue.PartOfSecret.X.ToByteArray()),
-                Y = ByteString.CopyFrom(oldValue.PartOfSecret.Y.ToByteArray()),
-            });
+                using var channel = GrpcChannel.ForAddress(oldValue.Node);
+
+                var client = new SecretsService.SecretsServiceClient(channel);
+
+                await client.PutSecretAsync(new PutSecretMessage()
+                {
+                    Id = _rollBackConfig.Key,
+                    X = ByteString.CopyFrom(oldValue.PartOfSecret.X.ToByteArray()),
+                    Y = ByteString.CopyFrom(oldValue.PartOfSecret.Y.ToByteArray()),
+                },deadline:DateTime.UtcNow.AddSeconds(0.5));
+            }
+            catch
+            {
+            }
         }
     }
 
@@ -34,14 +40,21 @@ public class RollBackService:IRollBack
     {
         foreach (var node in _rollBackConfig.RollBackNodes)
         {
-            using var channel = GrpcChannel.ForAddress(node);
-
-            var client = new SecretsService.SecretsServiceClient(channel);
-
-            await client.DeleteSecretAsync(new DeleteSecretMessage()
+            try
             {
-                Id = _rollBackConfig.Key
-            });
+                using var channel = GrpcChannel.ForAddress(node);
+
+                var client = new SecretsService.SecretsServiceClient(channel);
+
+                await client.DeleteSecretAsync(new DeleteSecretMessage()
+                {
+                    Id = _rollBackConfig.Key
+                },deadline:DateTime.UtcNow.AddSeconds(0.5));
+            }
+            catch (Exception e)
+            {
+            }
+            
         }
     }
 }
