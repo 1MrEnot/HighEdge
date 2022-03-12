@@ -5,22 +5,27 @@ namespace Straonit.HighEdge.Infrastructure.Contexts;
 
 public class RedisDbContext:IDbContext
 {
-    public Task<GetSecretResponse> GetSecretPart(GetSecretRerquest request)
+    public RedisDbContext()
+    {
+        
+    }
+    
+    public async Task<GetSecretResponse> GetSecretPart(GetSecretRerquest request)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Response> CreateSecretPart(CreateSecretRequest request)
+    public async Task<Response> CreateSecretPart(CreateSecretRequest request)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Response> DeleteSecretPart(DeleteSecretRequest request)
+    public async Task<Response> DeleteSecretPart(DeleteSecretRequest request)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Response> UpdateSecretPart(UpdateSecretRequest request)
+    public async Task<Response> UpdateSecretPart(UpdateSecretRequest request)
     {
         throw new NotImplementedException();
     }

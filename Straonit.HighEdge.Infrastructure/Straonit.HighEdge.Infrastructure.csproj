@@ -7,7 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Protobuf Include="Protos/Secret.proto" GrpcServices="Server" />
+        <Protobuf Include="Protos/Secret.proto" />
+
       <PackageReference Include="Grpc" Version="2.44.0" />
       <PackageReference Include="Grpc.AspNetCore" Version="2.43.0" />
     </ItemGroup>

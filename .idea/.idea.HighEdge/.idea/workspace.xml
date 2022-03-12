@@ -6,16 +6,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f39caf8a-a77e-4453-88b0-cd947b32b372" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/DeleteSecretRequest.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/GetSecretRerquest.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/UpdateSecretRequest.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Responses/GetSecretResponse.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Responses/Response.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Contexts/RedisDbContext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Service/SecretService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HighEdge/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HighEdge/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/CreateSecretRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/CreateSecretRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Persistence/IDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Persistence/IDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/ISecretService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/ISecretService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/CreateSecretRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/CreateSecretRequest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/UpdateSecretRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Requests/UpdateSecretRequest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Responses/GetSecretResponse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Core/Distribution/Responses/GetSecretResponse.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Contexts/RedisDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Contexts/RedisDbContext.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Protos/Secret.proto" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Protos/Secret.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Straonit.HighEdge.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Straonit.HighEdge.Infrastructure/Straonit.HighEdge.Infrastructure.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
