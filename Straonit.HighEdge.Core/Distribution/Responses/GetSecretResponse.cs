@@ -1,8 +1,8 @@
-using Straonit.HighEdge.Core.Secret;
-
 namespace Straonit.HighEdge.Core.Distribution;
 
 public class GetSecretResponse
 {
-    public List<PartOfSecret> PartOfSecrets { get; set; }
+    public string Id { get; set; }
+    public byte[] X { get; set; }
+    public byte[] Y { get; set; }
 }

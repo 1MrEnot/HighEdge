@@ -1,4 +1,4 @@
-namespace Straonit.HighEdge.Core.Configuration;
+namespace hackation_high_edge.Models;
 
 public class ClusterConfig
 {

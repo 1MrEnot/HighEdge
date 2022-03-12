@@ -1,6 +1,6 @@
-using System.Diagnostics;
+namespace Straonit.HighEdge.Extensions;
 
-namespace hackation_high_edge.Extensions;
+using System.Diagnostics;
 
 public static class ProcessExtension
 {

@@ -1,26 +1,26 @@
-namespace hackation_high_edge.Models
+namespace Straonit.HighEdge.Models
 {
     public class NodeStatus
     {
         //public string NodeId { get; set; }
         public string IpAddress { get; set; }
-        public ServiceStatus RedisStatus { get; set; }
-        public IEnumerable<Disk> Disks { get; set; }
-        public long SecretsSize { get; set; }
+        public string RedisStatus { get; set; }
+        // public IEnumerable<Disk> Disks { get; set; }
+        public Ram Ram { get; set; }        
         public bool IsApiAvailable { get; set; }
 
         public NodeStatus()
         {
-            
+
         }
 
-        public NodeStatus(string ipAddress,SelfNodeStatus status)
-        {
+        public NodeStatus(string ipAddress, SelfNodeStatus status)
+        {            
             IpAddress = ipAddress;
-            RedisStatus = status.RedisStatus;
-            Disks = status.Disks;
-            SecretsSize = status.SecretsSize;
+            RedisStatus = status.RedisStatus.ToString();
+            // Disks = status.Disks;        
             IsApiAvailable = true;
+            Ram = status.Ram;
         }
 
 
@@ -30,9 +30,8 @@ namespace hackation_high_edge.Models
             {
                 IpAddress = ipAddress,
                 IsApiAvailable = false,
-                RedisStatus = ServiceStatus.Unknown,
-                Disks = null,
-                SecretsSize = 0
+                RedisStatus = ServiceStatus.Unknown.ToString(),                
+                // Disks = null,                
             };
         }
     }

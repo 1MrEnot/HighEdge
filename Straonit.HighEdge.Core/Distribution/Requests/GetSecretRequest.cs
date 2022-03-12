@@ -1,6 +1,6 @@
 namespace Straonit.HighEdge.Core.Distribution;
 
-public class GetSecretRerquest
+public class GetSecretRequest
 {
     public string Id { get; set; }
 }
