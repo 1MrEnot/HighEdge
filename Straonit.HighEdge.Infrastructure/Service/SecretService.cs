@@ -4,11 +4,12 @@ using Grpc.Net.Client;
 using Secrets.Lib;
 using Straonit.HighEdge.Core.Configuration;
 using Straonit.HighEdge.Core.Distribution;
-using Straonit.HighEdge.Core.Secret;
 using GetSecretResponse = Straonit.HighEdge.Core.Distribution.GetSecretResponse;
 using Response = Straonit.HighEdge.Core.Distribution.Response;
 
 namespace Straonit.HighEdge.Infrastructure.Service;
+
+using Core.SplitSecret;
 
 public class SecretService:ISecretService
 {
@@ -34,10 +35,11 @@ public class SecretService:ISecretService
                 Y= ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray())
             });
 
-            if (reply.IsSuccess) successNodesCount++;
+            if (reply.IsSuccess)
+                successNodesCount++;
         }
         
-        return new Response()
+        return new Response
         {
             SuccessCount = successNodesCount
         };
@@ -82,7 +84,8 @@ public class SecretService:ISecretService
                 Y = ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray()),
             });
 
-            if (reply.IsSuccess) successNodesCount++;
+            if (reply.IsSuccess)
+                successNodesCount++;
         }
 
         return new Response()
@@ -93,7 +96,10 @@ public class SecretService:ISecretService
 
     public async Task<GetSecretResponse> GetSecret(string id)
     {
-        var response = new GetSecretResponse(){PartOfSecrets = new List<PartOfSecret>()};
+        var response = new GetSecretResponse
+        {
+            PartOfSecrets = new List<PartOfSecret>()
+        };
 
         foreach (var node in _config.Nodes)
         {
@@ -106,7 +112,10 @@ public class SecretService:ISecretService
                 Id = id
             });
 
-            response.PartOfSecrets.Add(new PartOfSecret(new BigInteger(reply.X.ToByteArray()),new BigInteger(reply.Y.ToByteArray())));
+            response.PartOfSecrets.Add(new PartOfSecret(
+                new BigInteger(reply.X.ToByteArray()),
+                new BigInteger(reply.Y.ToByteArray()))
+            );
         }
 
         return response;
