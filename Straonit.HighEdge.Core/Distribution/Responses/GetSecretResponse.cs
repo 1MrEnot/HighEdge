@@ -1,6 +1,6 @@
-namespace Straonit.HighEdge.Core.Distribution;
+using Straonit.HighEdge.Core.Secret;
 
-using SplitSecret;
+namespace Straonit.HighEdge.Core.Distribution;
 
 public class GetSecretResponse
 {
