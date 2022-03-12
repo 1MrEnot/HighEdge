@@ -39,13 +39,6 @@ public class StatusChecker
         };
     }
 
-    public async Task<long> GetSecretsSizeAsync()
-    {
-        //var size = await _connection.GetServer(_connection.GetEndPoints().First()).DatabaseSizeAsync();
-        var size = 100;
-        return size;
-    }
-
     public async Task<ServiceStatus> GetRedisStatusAsync()
     {
         ServiceStatus status;
@@ -72,12 +65,16 @@ public class StatusChecker
         return status;
     }
 
+    public async Task<long> GetSecretsCountAsync()
+    {        
+        return await _connection.GetServer(_connection.GetEndPoints().First()).DatabaseSizeAsync();
+    }
+
     public async Task<SelfNodeStatus> GetNodeStatusAsync()
     {
         return new SelfNodeStatus()
         {
-            Disks = GetDisks(),
-            SecretsSize = await GetSecretsSizeAsync(),
+            Disks = GetDisks(),            
             RedisStatus = await GetRedisStatusAsync(),
             Ram = GetRamInfo()
         };
