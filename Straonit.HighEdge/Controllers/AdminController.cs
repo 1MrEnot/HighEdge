@@ -21,31 +21,35 @@ public class AdminController
         _checker = checker;
     }
 
-    // [HttpGet("node/status/all")]
-    // public async Task<IEnumerable<NodeStatus>> GetStatuses()
-    // {
-    //     var client = _httpClientFactory.CreateClient();
-    //     var statuses = new List<NodeStatus>(_clusterConfig.Nodes.Count());
-    //     foreach (var node in _clusterConfig.Nodes)
-    //     {
-    //         var response = await client.GetAsync($"http://{node}/admin/node/status");
-    //         if (response.StatusCode == HttpStatusCode.OK)
-    //         {
-    //             statuses.Add(new NodeStatus(node, await response.GetObjectAsync<SelfNodeStatus>()));
-    //         }
-    //         else
-    //         {
-    //             statuses.Add(NodeStatus.CreateFailedStatus(node));
-    //         }
-    //     }
-    //     return statuses;
-    // }
+    [HttpGet("node/status/all")]
+    public async Task<ClusterStatus> GetStatuses()
+    {
+        var client = _httpClientFactory.CreateClient();
+        var statuses = new List<NodeStatus>(_clusterConfig.Nodes.Count());
+        foreach (var node in _clusterConfig.Nodes)
+        {
+            var response = await client.GetAsync($"http://{node}:5016/admin/node/status");
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                statuses.Add(new NodeStatus(node, await response.GetObjectAsync<SelfNodeStatus>()));
+            }
+            else
+            {
+                statuses.Add(NodeStatus.CreateFailedStatus(node));
+            }
+        }
+        var clusterStatus = new ClusterStatus(){
+            NodesStatuses = statuses,
+            SecretsCount = await _checker.GetSecretsCountAsync()
+        };
+        return clusterStatus;
+    }
 
     [HttpGet("node/status")]
     public async Task<SelfNodeStatus> GetStatus()
-    {
-        System.Console.WriteLine("Requested status");
-        var status = await _checker.GetNodeStatusAsync();
+    {        
+        var status = await _checker.GetNodeStatusAsync();   
+        System.Console.WriteLine(status.Ram.TotalSize);     
         return status;        
     }
 }

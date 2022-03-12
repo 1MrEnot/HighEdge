@@ -27,11 +27,13 @@ builder.Services.AddSwaggerGen();
 
 var config = builder.Configuration;
 
+System.Console.WriteLine("hm: "+config.GetValue<string>("Redis:Host"));
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp => ConnectionMultiplexer.Connect(new ConfigurationOptions
 {
     EndPoints = { $"{config.GetValue<string>("Redis:Host")}:{config.GetValue<int>("Redis:Port")}" },
-    Ssl = true,
+    //Ssl = true,
     AbortOnConnectFail = false,
+    // Password = 
 }));
 
 builder.Services.AddTransient(sp => sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
