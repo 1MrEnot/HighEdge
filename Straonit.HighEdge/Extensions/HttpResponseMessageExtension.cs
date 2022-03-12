@@ -1,6 +1,6 @@
-using System.Text.Json;
+namespace Straonit.HighEdge.Extensions;
 
-namespace hackation_high_edge.Extensions;
+using System.Text.Json;
 
 public static class HttpResponseMessageExtension
 {

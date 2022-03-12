@@ -1,11 +1,7 @@
 using System.Text.Json;
-using hackation_high_edge;
-using hackation_high_edge.Models;
-using hackation_high_edge.Service;
-using OpenTelemetry;
-using OpenTelemetry.Instrumentation.StackExchangeRedis;
-using OpenTelemetry.Trace;
-using StackExchange.Redis;
+using Straonit.HighEdge.Ioc;
+using Straonit.HighEdge.Models;
+using Straonit.HighEdge.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,16 +23,9 @@ builder.Services.AddSwaggerGen();
 
 var config = builder.Configuration;
 
-System.Console.WriteLine("hm: "+config.GetValue<string>("Redis:Host"));
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp => ConnectionMultiplexer.Connect(new ConfigurationOptions
-{
-    EndPoints = { $"{config.GetValue<string>("Redis:Host")}:{config.GetValue<int>("Redis:Port")}" },
-    //Ssl = true,
-    AbortOnConnectFail = false,
-    // Password = 
-}));
+builder.Services.AddRedisDatabase(config);
+builder.Services.AddShamirServices();
 
-builder.Services.AddTransient(sp => sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
 //builder.Services.AddTransient(sp => sp.GetRequiredService<StatusChecker>());
 builder.Services.AddTransient<StatusChecker>();
 

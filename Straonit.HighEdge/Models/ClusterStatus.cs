@@ -1,4 +1,6 @@
-namespace hackation_high_edge.Models;
+using Straonit.HighEdge.Models;
+
+namespace Straonit.HighEdge.Models;
 
 public class ClusterStatus
 {
