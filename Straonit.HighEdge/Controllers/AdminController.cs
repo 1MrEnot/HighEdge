@@ -32,11 +32,12 @@ public class AdminController
     public async Task<ClusterStatus> GetStatuses()
     {
         var client = _httpClientFactory.CreateClient();
+        client.Timeout = TimeSpan.FromSeconds(1);
         var statuses = new List<NodeStatus>(_clusterConfig.Nodes.Count());
         foreach (var node in _clusterConfig.Nodes)
         {
             try
-            {
+            {                
                 var response = await client.GetAsync($"http://{node}:80/admin/node/status");
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
@@ -55,7 +56,8 @@ public class AdminController
         var clusterStatus = new ClusterStatus()
         {
             NodesStatuses = statuses,
-            SecretsCount = await _checker.GetSecretsCountAsync()
+            SecretsCount = await _checker.GetSecretsCountAsync(),
+            ClusterConfig = _clusterConfig
         };
         return clusterStatus;
     }
