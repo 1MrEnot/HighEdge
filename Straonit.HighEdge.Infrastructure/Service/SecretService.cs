@@ -59,13 +59,13 @@ public class SecretService : ISecretService
                 }, deadline: DateTime.UtcNow.AddSeconds(0.5));
 
                 if (!reply.IsSuccess)
-                    failed.Add(nodeUrl, (splittedSecret.Key, new PartOfSecret(x, y)));
+                    failed[nodeUrl] = (splittedSecret.Key, new PartOfSecret(x, y));
 
                 nodes.Add(_config.Nodes[i]);
             }
             catch (Exception)
             {
-                failed.Add(nodeUrl, (splittedSecret.Key, new PartOfSecret(x, y)));
+                failed[nodeUrl] = (splittedSecret.Key, new PartOfSecret(x, y));
             }
         }
 
@@ -108,7 +108,7 @@ public class SecretService : ISecretService
             }
             catch
             {
-                failed.Add(id, nodeUrl);
+                failed[id] = nodeUrl;
             }
         }
 
@@ -152,7 +152,7 @@ public class SecretService : ISecretService
                 }, deadline: DateTime.UtcNow.AddSeconds(0.5));
 
                 if (!reply.IsSuccess)
-                    failed.Add(nodeUrl, (splittedSecret.Key, new PartOfSecret(x, y)));
+                    failed[nodeUrl] = (splittedSecret.Key, new PartOfSecret(x, y));
 
                 successNodesCount++;
                 oldValueParts.Add(new OldValue()
@@ -163,7 +163,7 @@ public class SecretService : ISecretService
             }
             catch
             {
-                failed.Add(nodeUrl, (splittedSecret.Key, new PartOfSecret(x, y)));
+                failed[nodeUrl] = (splittedSecret.Key, new PartOfSecret(x, y));
             }
         }
 
