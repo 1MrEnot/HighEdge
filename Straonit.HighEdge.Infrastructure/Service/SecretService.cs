@@ -9,6 +9,7 @@ using Response = Straonit.HighEdge.Core.Distribution.Response;
 
 namespace Straonit.HighEdge.Infrastructure.Service;
 
+using Core.NodeRestoration;
 using Core.SplitSecret;
 
 public class SecretService : ISecretService
@@ -17,10 +18,13 @@ public class SecretService : ISecretService
     private readonly GrpcChannelOptions _dangerousChannelOptions;
     private readonly RollBackConfig _rollBackConfig;
     private readonly IRollBack _rollBackService;
+    private readonly INodeCommandSaver _nodeCommandSaver;
 
-    public SecretService(ClusterConfig config, RollBackConfig rollBackConfig, IRollBack rollBackService)
+    public SecretService(ClusterConfig config, RollBackConfig rollBackConfig, IRollBack rollBackService,
+        INodeCommandSaver nodeCommandSaver)
     {
         _config = config;
+        _nodeCommandSaver = nodeCommandSaver;
         var dangerousHandler = new HttpClientHandler();
         dangerousHandler.ServerCertificateCustomValidationCallback
             = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
@@ -33,55 +37,64 @@ public class SecretService : ISecretService
 
     public async Task<Response> CreateSecret(SplittedSecret splittedSecret)
     {
-        var successNodesCount = 0;
         var nodes = new List<string>();
+        var failed = new Dictionary<string, (string, PartOfSecret)>();
 
         for (var i = 0; i < _config.Nodes.Count; i++)
         {
             try
             {
-                using var channel =
-                    GrpcChannel.ForAddress("http://" + _config.Nodes[i] + ":82", _dangerousChannelOptions);
+                var nodeUrl = "http://" + _config.Nodes[i] + ":82";
+                using var channel = GrpcChannel.ForAddress(nodeUrl, _dangerousChannelOptions);
 
                 var client = new SecretsService.SecretsServiceClient(channel);
+
+                var x = splittedSecret.ValueParts[i].X;
+                var y = splittedSecret.ValueParts[i].Y;
 
                 var reply = await client.CreateSecretAsync(new CreateSecretMessage()
                 {
                     Id = splittedSecret.Key,
-                    X = ByteString.CopyFrom(splittedSecret.ValueParts[i].X.ToByteArray()),
-                    Y = ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray())
+                    X = ByteString.CopyFrom(x.ToByteArray()),
+                    Y = ByteString.CopyFrom(y.ToByteArray())
                 }, deadline: DateTime.UtcNow.AddSeconds(0.5));
 
-                if (!reply.IsSuccess) continue;
+                if (!reply.IsSuccess)
+                    failed.Add(nodeUrl, (splittedSecret.Key, new PartOfSecret(x, y)));
 
                 nodes.Add(_config.Nodes[i]);
-                successNodesCount++;
             }
             catch (Exception ex)
             {
+                // ignored
             }
         }
 
-        if (successNodesCount < _config.RequiredNodesCount)
+        if (nodes.Count < _config.RequiredNodesCount)
         {
             await _rollBackService.RollBackCreate(nodes, splittedSecret.Key);
         }
-
-        return new Response()
+        else
         {
-            SuccessCount = successNodesCount
-        };
+            var saveTask = Task.WhenAll(failed
+                .Select(pair => _nodeCommandSaver.WriteCreateCommand(pair.Key, pair.Value.Item2, pair.Value.Item1)));
+
+            await saveTask;
+        }
+
+        return new Response { SuccessCount = nodes.Count };
     }
 
     public async Task<Response> DeleteSecret(string id)
     {
         var successNodesCount = 0;
-        var oldValueParts = new List<OldValue>();
+        var failed = new Dictionary<string, string>();
         foreach (var node in _config.Nodes)
         {
             try
             {
-                using var channel = GrpcChannel.ForAddress("http://" + node + ":82", _dangerousChannelOptions);
+                var nodeUrl = "http://" + node + ":82";
+                using var channel = GrpcChannel.ForAddress(nodeUrl, _dangerousChannelOptions);
 
                 var client = new SecretsService.SecretsServiceClient(channel);
 
@@ -91,21 +104,20 @@ public class SecretService : ISecretService
                 }, deadline: DateTime.UtcNow.AddSeconds(0.5));
 
                 successNodesCount++;
-                // oldValueParts.Add(new OldValue()
-                // {
-                //     PartOfSecret = splittedSecret.ValueParts[i],
-                //     Node = _config.Nodes[i]
-                // });
             }
             catch
             {
             }
         }
 
-        if (successNodesCount < _config.RequiredNodesCount)
+        if (successNodesCount > _config.RequiredNodesCount)
         {
-            await _rollBackService.RollBackDelete(oldValueParts, id);
+            var saveTask = Task.WhenAll(failed
+                .Select(pair => _nodeCommandSaver.WriteDeleteCommand(pair.Key, pair.Value)));
+
+            await saveTask;
         }
+
         return new Response()
         {
             SuccessCount = successNodesCount
@@ -116,24 +128,29 @@ public class SecretService : ISecretService
     {
         var successNodesCount = 0;
         var oldValueParts = new List<OldValue>();
+        var failed = new Dictionary<string, (string, PartOfSecret)>();
 
         for (var i = 0; i < _config.NodesCount; i++)
         {
             try
             {
-                using var channel =
-                    GrpcChannel.ForAddress("http://" + _config.Nodes[i] + ":82", _dangerousChannelOptions);
+                var nodeUrl = "http://" + _config.Nodes[i] + ":82";
+                using var channel = GrpcChannel.ForAddress(nodeUrl, _dangerousChannelOptions);
 
                 var client = new SecretsService.SecretsServiceClient(channel);
+
+                var x = splittedSecret.ValueParts[i].X;
+                var y = splittedSecret.ValueParts[i].Y;
 
                 var reply = await client.PutSecretAsync(new PutSecretMessage()
                 {
                     Id = splittedSecret.Key,
-                    X = ByteString.CopyFrom(splittedSecret.ValueParts[i].X.ToByteArray()),
-                    Y = ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray()),
+                    X = ByteString.CopyFrom(x.ToByteArray()),
+                    Y = ByteString.CopyFrom(y.ToByteArray()),
                 }, deadline: DateTime.UtcNow.AddSeconds(0.5));
 
-                if (!reply.IsSuccess) continue;
+                if (!reply.IsSuccess)
+                    failed.Add(nodeUrl, (splittedSecret.Key, new PartOfSecret(x, y)));
 
                 successNodesCount++;
                 oldValueParts.Add(new OldValue()
@@ -151,6 +168,14 @@ public class SecretService : ISecretService
         if (successNodesCount < _config.RequiredNodesCount)
         {
             await _rollBackService.RollBackUpdate(oldValueParts, splittedSecret.Key);
+        }
+        else
+        {
+            foreach (var (nodeUrl, (key, partOfSecret)) in failed)
+            {
+                await _nodeCommandSaver.WriteDeleteCommand(key, nodeUrl);
+                await _nodeCommandSaver.WriteCreateCommand(key, partOfSecret, nodeUrl);
+            }
         }
 
         return new Response()
