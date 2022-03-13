@@ -22,6 +22,10 @@ builder.Services.AddSwaggerGen();
 
 var config = builder.Configuration;
 
+builder.Services.AddLogging(logging =>
+{
+    logging.AddSimpleConsole(options => options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ");
+});
 builder.Services.AddRedisDatabase(config);
 builder.Services.AddShamirServices();
 
