@@ -1,4 +1,6 @@
-﻿namespace Straonit.HighEdge.Core.SplitSecret;
+﻿using Straonit.HighEdge.Core.Distribution;
+
+namespace Straonit.HighEdge.Core.SplitSecret;
 
 public class SecretWithKey
 {
@@ -7,6 +9,8 @@ public class SecretWithKey
         Key = key;
         Secret = secret;
     }
+
+    public GetSecretResponse Response { get; set; }
 
     public string Key { get; }
 

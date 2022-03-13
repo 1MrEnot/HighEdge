@@ -31,12 +31,14 @@ builder.Services.AddShamirServices();
 //builder.Services.AddTransient(sp => sp.GetRequiredService<StatusChecker>());
 builder.Services.AddTransient<StatusChecker>();
 builder.Services.AddTransient<ISecretService, SecretService>();
+builder.Services.AddTransient<IRollBack, RollBackService>();
 
 
 var clusterConfigJson = File.ReadAllText(Environment.GetEnvironmentVariable("CLUSTER_CONFIG"));
 System.Console.WriteLine(clusterConfigJson);
 var clusterConfig = JsonSerializer.Deserialize<ClusterConfig>(clusterConfigJson);
 System.Console.WriteLine(clusterConfig.Nodes.Count);
+
 builder.Services.AddSingleton<ClusterConfig>(clusterConfig);
 builder.Services.AddSingleton<RollBackConfig>();
 builder.Services.AddTransient<DistributedSecretSerivce>();
