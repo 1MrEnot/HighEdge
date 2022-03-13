@@ -82,7 +82,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<PingMiddleware>();
+//app.UseMiddleware<PingMiddleware>();
 
 app.UseAuthorization();
 app.MapGrpcService<GrpcServer>();
