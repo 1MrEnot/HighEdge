@@ -33,15 +33,22 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
 
     public async Task WriteCreateCommand(string key, PartOfSecret partOfSecret, string nodeUrl)
     {
-        await EnsureCreated();
+        try
+        {
+            await EnsureCreated();
 
-        await using var createCmd = new NpgsqlCommand(InsertCreate, _npgsql);
-        createCmd.Parameters.Add(new NpgsqlParameter("timestamp", DateTime.UtcNow));
-        createCmd.Parameters.Add(new NpgsqlParameter("hostname", nodeUrl));
-        createCmd.Parameters.Add(new NpgsqlParameter("key", key));
-        createCmd.Parameters.Add(new NpgsqlParameter("x", partOfSecret.X.ToByteArray()));
-        createCmd.Parameters.Add(new NpgsqlParameter("y", partOfSecret.Y.ToByteArray()));
-        await createCmd.ExecuteNonQueryAsync();
+            await using var createCmd = new NpgsqlCommand(InsertCreate, _npgsql);
+            createCmd.Parameters.Add(new NpgsqlParameter("timestamp", DateTime.UtcNow));
+            createCmd.Parameters.Add(new NpgsqlParameter("hostname", nodeUrl));
+            createCmd.Parameters.Add(new NpgsqlParameter("key", key));
+            createCmd.Parameters.Add(new NpgsqlParameter("x", partOfSecret.X.ToByteArray()));
+            createCmd.Parameters.Add(new NpgsqlParameter("y", partOfSecret.Y.ToByteArray()));
+            await createCmd.ExecuteNonQueryAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to save create command to db");
+        }
     }
 
     public async Task WriteDeleteCommand(string key, string nodeUrl)

@@ -42,16 +42,15 @@ public class SecretService : ISecretService
 
         for (var i = 0; i < _config.Nodes.Count; i++)
         {
+            var nodeUrl = "http://" + _config.Nodes[i] + ":82";
+            var x = splittedSecret.ValueParts[i].X;
+            var y = splittedSecret.ValueParts[i].Y;
+
             try
             {
-                var nodeUrl = "http://" + _config.Nodes[i] + ":82";
                 using var channel = GrpcChannel.ForAddress(nodeUrl, _dangerousChannelOptions);
 
                 var client = new SecretsService.SecretsServiceClient(channel);
-
-                var x = splittedSecret.ValueParts[i].X;
-                var y = splittedSecret.ValueParts[i].Y;
-
                 var reply = await client.CreateSecretAsync(new CreateSecretMessage()
                 {
                     Id = splittedSecret.Key,
@@ -64,9 +63,9 @@ public class SecretService : ISecretService
 
                 nodes.Add(_config.Nodes[i]);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // ignored
+                failed.Add(nodeUrl, (splittedSecret.Key, new PartOfSecret(x, y)));
             }
         }
 
@@ -76,10 +75,10 @@ public class SecretService : ISecretService
         }
         else
         {
-            var saveTask = Task.WhenAll(failed
-                .Select(pair => _nodeCommandSaver.WriteCreateCommand(pair.Key, pair.Value.Item2, pair.Value.Item1)));
-
-            await saveTask;
+            foreach (var (key, value) in failed)
+            {
+                await _nodeCommandSaver.WriteCreateCommand(key, value.Item2, value.Item1);
+            }
         }
 
         return new Response { SuccessCount = nodes.Count };
@@ -89,11 +88,13 @@ public class SecretService : ISecretService
     {
         var successNodesCount = 0;
         var failed = new Dictionary<string, string>();
+
         foreach (var node in _config.Nodes)
         {
+            var nodeUrl = "http://" + node + ":82";
+
             try
             {
-                var nodeUrl = "http://" + node + ":82";
                 using var channel = GrpcChannel.ForAddress(nodeUrl, _dangerousChannelOptions);
 
                 var client = new SecretsService.SecretsServiceClient(channel);
@@ -107,15 +108,16 @@ public class SecretService : ISecretService
             }
             catch
             {
+                failed.Add(id, nodeUrl);
             }
         }
 
         if (successNodesCount > _config.RequiredNodesCount)
         {
-            var saveTask = Task.WhenAll(failed
-                .Select(pair => _nodeCommandSaver.WriteDeleteCommand(pair.Key, pair.Value)));
-
-            await saveTask;
+            foreach (var (key, nodeUrl) in failed)
+            {
+                await _nodeCommandSaver.WriteDeleteCommand(key, nodeUrl);
+            }
         }
 
         return new Response()
@@ -132,16 +134,16 @@ public class SecretService : ISecretService
 
         for (var i = 0; i < _config.NodesCount; i++)
         {
+            var nodeUrl = "http://" + _config.Nodes[i] + ":82";
+
+            var x = splittedSecret.ValueParts[i].X;
+            var y = splittedSecret.ValueParts[i].Y;
+
             try
             {
-                var nodeUrl = "http://" + _config.Nodes[i] + ":82";
                 using var channel = GrpcChannel.ForAddress(nodeUrl, _dangerousChannelOptions);
 
                 var client = new SecretsService.SecretsServiceClient(channel);
-
-                var x = splittedSecret.ValueParts[i].X;
-                var y = splittedSecret.ValueParts[i].Y;
-
                 var reply = await client.PutSecretAsync(new PutSecretMessage()
                 {
                     Id = splittedSecret.Key,
@@ -161,7 +163,7 @@ public class SecretService : ISecretService
             }
             catch
             {
-                //ignore
+                failed.Add(nodeUrl, (splittedSecret.Key, new PartOfSecret(x, y)));
             }
         }
 
