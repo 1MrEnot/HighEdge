@@ -1,3 +1,5 @@
+using Straonit.HighEdge.Core.Exceptions;
+
 namespace Straonit.HighEdge.Infrastructure;
 
 using Core.Distribution;
@@ -18,6 +20,11 @@ public class RedisDbContext : IDbContext
     
     public async Task<GetSecretPartResponse> GetSecretPart(GetSecretRequest request)
     {
+        if (!_database.KeyExists(request.Id))
+        {
+            throw new KeyNotExistsException($"Ключ {request.Id} не найден");
+        }
+
         var secret = await _database.StringGetAsync(request.Id);
         var pointModel = _serializer.Deserialize<RedisPointModel>(secret);
         return new GetSecretPartResponse(request.Id, pointModel.X, pointModel.Y);

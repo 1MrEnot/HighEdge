@@ -166,14 +166,18 @@ public class SecretService:ISecretService
                 var reply = await client.GetSecretAsync(new GetSecretMessage()
                 {
                     Id = id
-                },deadline:DateTime.UtcNow.AddSeconds(0.5));
+                }, deadline: DateTime.UtcNow.AddSeconds(0.5));
 
                 response.PartOfSecrets.Add(new PartOfSecret(new BigInteger(reply.X.ToByteArray()),
                     new BigInteger(reply.Y.ToByteArray())));
             }
+            catch (KeyNotFoundException keyNotFoundException)
+            {
+                response.NodesWithNotExistentKey.Add($"Узел {node}: {keyNotFoundException.Message}");
+            }
             catch (Exception ex)
             {
-                // ignored
+                 response.UnWorkedNodes.Add($"Узел {node} не работает");
             }
         }
 
