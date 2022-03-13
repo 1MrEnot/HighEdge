@@ -13,7 +13,7 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
 
     private const string InsertCreate = "INSERT INTO saved_commands VALUES (@timestamp, @hostname, @key, 1, @x, @y)";
     private const string InsertDelete = "INSERT INTO saved_commands (timestamp, hostname, key, command_type) VALUES (@timestamp, @hostname, @key, 2)";
-    private const string CreateTable = @"create table saved_commands
+    private const string CreateTable = @"create table if not exists saved_commands
     (
         timestamp    timestamp not null,
         hostname     varchar   not null,
