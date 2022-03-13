@@ -1,11 +1,9 @@
 namespace Straonit.HighEdge.Models
 {
     public class NodeStatus
-    {
-        //public string NodeId { get; set; }
+    {        
         public string IpAddress { get; set; }
-        public string RedisStatus { get; set; }
-        // public IEnumerable<Disk> Disks { get; set; }
+        public string RedisStatus { get; set; }        
         public Ram Ram { get; set; }        
         public bool IsApiAvailable { get; set; }
 
@@ -17,8 +15,7 @@ namespace Straonit.HighEdge.Models
         public NodeStatus(string ipAddress, SelfNodeStatus status)
         {            
             IpAddress = ipAddress;
-            RedisStatus = status.RedisStatus.ToString();
-            // Disks = status.Disks;        
+            RedisStatus = status.RedisStatus.ToString();              
             IsApiAvailable = true;
             Ram = status.Ram;
         }
@@ -30,8 +27,7 @@ namespace Straonit.HighEdge.Models
             {
                 IpAddress = ipAddress,
                 IsApiAvailable = false,
-                RedisStatus = ServiceStatus.Unknown.ToString(),                
-                // Disks = null,                
+                RedisStatus = ServiceStatus.Unknown.ToString()                         
             };
         }
     }
