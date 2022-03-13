@@ -8,7 +8,12 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
 {
     private bool _dbCreated;
     private readonly NpgsqlConnection _npgsql;
-    private const string InsertCreate = "INSERT INTO saved_commands VALUES ($1, $2, $3, $4, $5, $6)";
+
+    private const int InsertCommandType = 1;
+    private const string InsertCreate = "INSERT INTO saved_commands VALUES (@timestamp, @hostname, @key, 1, @x, @y)";
+
+    private const int DeleteCommandType = 2;
+    private const string InsertDelete = "INSERT INTO saved_commands (timestamp, hostname, key, command_type) VALUES (@timestamp, @hostname, @key, 2)";
 
     public PostgreNodeCommandSaver(NpgsqlConnection npgsql)
     {
@@ -21,7 +26,11 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
         await EnsureCreated();
 
         await using var createCmd = new NpgsqlCommand(InsertCreate, _npgsql);
-        createCmd.Parameters.Add(new NpgsqlParameter())
+        createCmd.Parameters.Add(new NpgsqlParameter("timestamp", DateTime.UtcNow));
+        createCmd.Parameters.Add(new NpgsqlParameter("hostname", nodeUrl));
+
+
+
 
         await createCmd.ExecuteNonQueryAsync();
     }
