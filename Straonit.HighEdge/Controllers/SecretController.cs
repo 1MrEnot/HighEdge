@@ -39,15 +39,23 @@ public class SecretController:ControllerBase
 
         if (_clusterConfig.NodesCount - response.UnWorkedNodes.Count < _clusterConfig.RequiredNodesCount)
         {
-            return StatusCode(500,new {response.UnWorkedNodes, response.NodesWithNotExistentKey});
+            return StatusCode(500,new {response.UnWorkedNodes});
         }
 
         if (_clusterConfig.NodesCount - response.NodesWithNotExistentKey.Count <
             _clusterConfig.RequiredNodesCount)
         {
-            return BadRequest(new {response.UnWorkedNodes, response.NodesWithNotExistentKey});
+            return BadRequest(new {response.NodesWithNotExistentKey});
         }
 
-        return Ok(new{response.Key, response.Secret});
+        return Ok(new{response.Secret});
+    }
+    
+    [HttpDelete("{key}")]
+    public async Task<IActionResult> DeleteSecret(string key)
+    {
+        var response = await _distributedSecretSerivce.DeleteSecret(key);
+
+        return Ok(response);
     }
 }
