@@ -21,9 +21,7 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
         command_type integer   not null,
         x            bytea,
         y            bytea
-    );
-    alter table saved_commands
-        owner to postgres;";
+    );";
 
     public PostgreNodeCommandSaver(NpgsqlConnection npgsql, ILogger<PostgreNodeCommandSaver> logger)
     {
