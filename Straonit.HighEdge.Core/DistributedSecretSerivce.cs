@@ -33,12 +33,16 @@ public class DistributedSecretSerivce
     public async Task<SecretWithKey> GetSecret(string key)
     {
         var splittedSecret = await _secretService.GetSecret(key);
-        var combinedSecret = _secretCombiner.CombineSecret(new SplittedSecret(key, splittedSecret.PartOfSecrets));
-        combinedSecret.Response = new GetSecretResponse()
+        if (splittedSecret.PartOfSecrets.Count >= _clusterConfig.RequiredNodesCount)
         {
-            NodesWithNotExistentKey = splittedSecret.NodesWithNotExistentKey,
-            UnWorkedNodes = splittedSecret.UnWorkedNodes
-        };
-        return combinedSecret;
+            var combinedSecret = _secretCombiner.CombineSecret(new SplittedSecret(key, splittedSecret.PartOfSecrets));
+            combinedSecret.Response = new GetSecretResponse()
+            {
+                NodesWithNotExistentKey = splittedSecret.NodesWithNotExistentKey,
+                UnWorkedNodes = splittedSecret.UnWorkedNodes
+            };
+            return combinedSecret;
+        }
+        return null;
     }
 }

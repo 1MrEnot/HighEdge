@@ -17,10 +17,10 @@ public class SecretService:ISecretService
     private readonly GrpcChannelOptions _dangerousChannelOptions;
     private readonly RollBackConfig _rollBackConfig;
     private readonly IRollBack _rollBackService;
-    public SecretService(ClusterConfig config,RollBackConfig rollBackConfig,IRollBack rollBackService) => 
-        (_config,_rollBackConfig,_rollBackService)=(config,rollBackConfig,rollBackService);
+    // public SecretService(ClusterConfig config,RollBackConfig rollBackConfig,IRollBack rollBackService) => 
+    //     (_config,_rollBackConfig,_rollBackService)=(config,rollBackConfig,rollBackService);
 
-    public SecretService(ClusterConfig config)
+    public SecretService(ClusterConfig config,RollBackConfig rollBackConfig,IRollBack rollBackService)
     {
         _config = config;
         var dangerousHandler = new HttpClientHandler();
@@ -30,6 +30,7 @@ public class SecretService:ISecretService
         {
             HttpHandler = dangerousHandler
         };
+        (_config,_rollBackConfig,_rollBackService)=(config,rollBackConfig,rollBackService);
     }
 
     public async Task<Response> CreateSecret(SplittedSecret splittedSecret)
@@ -64,7 +65,7 @@ public class SecretService:ISecretService
 
         if (successNodesCount < _config.RequiredNodesCount)
         {
-            // await _rollBackService.RollBackCreate();
+            await _rollBackService.RollBackCreate();
         }
 
         return new Response()

@@ -30,7 +30,7 @@ public class SecretController:ControllerBase
     {
         var response = await _distributedSecretSerivce.GetSecret(key);
 
-        if (_clusterConfig.NodesCount - response.Response.UnWorkedNodes.Count < _clusterConfig.RequiredNodesCount)
+        if (response == null ||  _clusterConfig.NodesCount - response.Response.UnWorkedNodes.Count < _clusterConfig.RequiredNodesCount)
         {
             return StatusCode(500,response);
         }
