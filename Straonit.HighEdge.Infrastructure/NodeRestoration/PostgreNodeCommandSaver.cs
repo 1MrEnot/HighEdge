@@ -28,10 +28,6 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
         await using var createCmd = new NpgsqlCommand(InsertCreate, _npgsql);
         createCmd.Parameters.Add(new NpgsqlParameter("timestamp", DateTime.UtcNow));
         createCmd.Parameters.Add(new NpgsqlParameter("hostname", nodeUrl));
-
-
-
-
         await createCmd.ExecuteNonQueryAsync();
     }
 
@@ -55,7 +51,6 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
 
     private Task CreateTables()
     {
-
         _dbCreated = true;
         return Task.CompletedTask;
     }

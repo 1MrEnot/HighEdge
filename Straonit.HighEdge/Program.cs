@@ -18,6 +18,7 @@ using Straonit.HighEdge.Infrastructure.Grpc;
 using Straonit.HighEdge.Infrastructure.Service;
 using Straonit.HighEdge.Ioc;
 using Straonit.HighEdge.Middlewares;
+using Straonit.HighEdge.Services;
 using Straonit.HighEdge.Services.Implementations;
 
 
@@ -36,10 +37,10 @@ builder.Services.AddShamirServices();
 builder.Services.AddTransient<StatusChecker>();
 builder.Services.AddTransient<ISecretService, SecretService>();
 builder.Services.AddTransient<IRollBack, RollBackService>();
-builder.Services.AddTransient<IPingService, PingService>();
+// builder.Services.AddTransient<IPingService, PingService>();
 
-builder.Services.AddHostedService<LongRunningService>();
-builder.Services.AddSingleton<BackgroundWorkerQueue>();
+// builder.Services.AddHostedService<LongRunningService>();
+// builder.Services.AddSingleton<BackgroundWorkerQueue>();
 
 
 var clusterConfigJson = File.ReadAllText(Environment.GetEnvironmentVariable("CLUSTER_CONFIG"));
@@ -51,10 +52,10 @@ builder.Services.AddSingleton<ClusterConfig>(clusterConfig);
 builder.Services.AddSingleton<RollBackConfig>();
 builder.Services.AddTransient<DistributedSecretSerivce>();
 
-builder.Services.AddDbContext<IDbContext,SQLiteDbContext>(options=>options.UseSqlite(config.GetValue<string>("DATABASE_PATH")));
-
 builder.Services.AddHttpClient();
 builder.Services.AddGrpc();
+
+builder.Services.AddSingleton(sp => sp.GetRequiredService<TaskService>());
 
 // builder.Services.AddControllersWithViews();
 
@@ -67,7 +68,7 @@ builder.WebHost.ConfigureKestrel(options =>
 {
     options.Listen(IPAddress.Any, 80, listenOptions =>
     {
-        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;        
+        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
     });
 
     options.Listen(IPAddress.Any, 82, listenOptions =>

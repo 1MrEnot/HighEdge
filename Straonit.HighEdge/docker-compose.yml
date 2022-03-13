@@ -7,9 +7,16 @@ networks:
         driver: default
         config:
           - subnet: 10.0.0.0/24
-            gateway: 10.0.0.1
+            gateway: 10.0.0.254
 
 services:
+  postgres:
+    image: "postgres:14.2-alpine"   
+    networks:        
+      local:
+        ipv4_address: 10.0.0.1   
+    environment:
+      - POSTGRES_PASSWORD=s3cr3tP0stgr3s
   redis0:
     image: "redis:alpine"
     command: redis-server --requirepass s3cr3tP@ssw0rd    
@@ -20,7 +27,7 @@ services:
     build: .      
     networks:        
       local:
-        ipv4_address: 10.0.0.3             
+        ipv4_address: 10.0.0.3           
     volumes:
       - /home/v-user/Desktop/HighEdge/Straonit.HighEdge/Config/:/etc/secret-cluster/
     depends_on:

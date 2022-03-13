@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models;
 using Services.Implementations;
 using Straonit.HighEdge.Extensions;
+using Straonit.HighEdge.Services;
 
 [ApiController]
 [Route("[controller]")]
@@ -20,14 +21,16 @@ public class AdminController
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly StatusChecker _checker;
     private readonly BackgroundWorkerQueue _backgroundWorkerQueue;
+    private TaskService _taskService;
 
     public AdminController(ClusterConfig clusterConfig,
-        IHttpClientFactory httpClientFactory, StatusChecker checker, BackgroundWorkerQueue backgroundWorkerQueue)
+        IHttpClientFactory httpClientFactory, StatusChecker checker, BackgroundWorkerQueue backgroundWorkerQueue, TaskService taskService)
     {
         _clusterConfig = clusterConfig;
         _httpClientFactory = httpClientFactory;
         _checker = checker;
         _backgroundWorkerQueue = backgroundWorkerQueue;
+        _taskService = taskService;
     }
 
     [HttpGet("node/status/all")]
