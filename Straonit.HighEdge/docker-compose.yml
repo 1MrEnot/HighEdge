@@ -16,7 +16,8 @@ services:
       local:
         ipv4_address: 10.0.0.1   
     environment:
-      - POSTGRES_PASSWORD=s3cr3tP0stgr3s
+      - POSTGRES_DB=hackaton
+      - POSTGRES_PASSWORD=s3cr3tP0stgr3s      
   redis0:
     image: "redis:alpine"
     command: redis-server --requirepass s3cr3tP@ssw0rd    
@@ -31,6 +32,7 @@ services:
     volumes:
       - /home/v-user/Desktop/HighEdge/Straonit.HighEdge/Config/:/etc/secret-cluster/
     depends_on:
+      - postgres
       - redis0
     environment:
       - REDIS__PASS=s3cr3tP@ssw0rd
@@ -39,6 +41,7 @@ services:
       - REDIS__HOST=10.0.0.2
       - REDIS__PORT=6379
       - CLUSTER_CONFIG=/etc/secret-cluster/config.json
+      - POSTGRES_CONNECTION=Host=10.0.0.1;Username=postgres;Password=s3cr3tP0stgr3s;Database=hackaton
   
   redis1:
     image: "redis:alpine"
@@ -54,6 +57,7 @@ services:
     volumes:
       - /home/v-user/Desktop/HighEdge/Straonit.HighEdge/Config/:/etc/secret-cluster/
     depends_on:
+      - postgres
       - redis1
     environment:
       - REDIS__PASS=s3cr3tP@ssw0rd
@@ -62,6 +66,7 @@ services:
       - REDIS__HOST=10.0.0.4
       - REDIS__PORT=6379
       - CLUSTER_CONFIG=/etc/secret-cluster/config.json
+      - POSTGRES_CONNECTION=Host=10.0.0.1;Username=postgres;Password=s3cr3tP0stgr3s;Database=hackaton
 
   redis2:
     image: "redis:alpine"
@@ -77,6 +82,7 @@ services:
     volumes:
       - /home/v-user/Desktop/HighEdge/Straonit.HighEdge/Config/:/etc/secret-cluster/
     depends_on:
+      - postgres
       - redis1
     environment:
       - REDIS__PASS=s3cr3tP@ssw0rd
@@ -85,6 +91,7 @@ services:
       - REDIS__HOST=10.0.0.6
       - REDIS__PORT=6379
       - CLUSTER_CONFIG=/etc/secret-cluster/config.json
+      - POSTGRES_CONNECTION=Host=10.0.0.1;Username=postgres;Password=s3cr3tP0stgr3s;Database=hackaton
 
   # redis3:
   #   image: "redis:alpine"

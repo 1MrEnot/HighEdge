@@ -8,12 +8,10 @@ public class TaskService
     private Dictionary<int, TaskData> tasks;
 
     private Random random;
+    
 
-    private NpgsqlConnection _npgsql;
-
-    public TaskService(NpgsqlConnection npgsql)
-    {
-        _npgsql = npgsql;
+    public TaskService()
+    {        
         tasks = new Dictionary<int, TaskData>();
         random = new Random();
     }

@@ -13,7 +13,7 @@ public class RollBackService : IRollBack
     public RollBackService(RollBackConfig rollBackConfig) =>
         (_rollBackConfig) = (rollBackConfig);
 
-    public async Task RollBackUpdate(List<OldValue> oldValues, string key)
+    public async Task RollBackUpdate(IEnumerable<OldValue> oldValues, string key)
     {
         foreach (var oldValue in oldValues)
         {
@@ -38,7 +38,7 @@ public class RollBackService : IRollBack
     }
     
 
-    public async Task RollBackCreate(List<string> nodes, string key)
+    public async Task RollBackCreate(IEnumerable<string> nodes, string key)
     {
         foreach (var node in nodes)
         {
@@ -60,7 +60,7 @@ public class RollBackService : IRollBack
         }
     }
 
-    public async Task RollBackDelete(List<OldValue> oldValues, string key)
+    public async Task RollBackDelete(IEnumerable<OldValue> oldValues, string key)
     {
         foreach (var oldValue in oldValues)
         {
