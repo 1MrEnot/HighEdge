@@ -37,7 +37,7 @@ public class AdminController
     public async Task<ClusterStatus> GetStatuses()
     {
         var client = _httpClientFactory.CreateClient();
-        client.Timeout = TimeSpan.FromSeconds(1);
+        client.Timeout = TimeSpan.FromSeconds(3);
         var statuses = new List<NodeStatus>(_clusterConfig.Nodes.Count());
         var clusterStatus = new ClusterStatus();
         foreach (var node in _clusterConfig.Nodes)

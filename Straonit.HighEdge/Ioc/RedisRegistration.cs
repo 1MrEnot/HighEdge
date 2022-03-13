@@ -20,7 +20,11 @@ public static class RedisRegistration
                 {
                     EndPoints = { config.Value.ConnectionString },
                     AbortOnConnectFail = false,
-                    Password = config.Value.Pass
+                    Password = config.Value.Pass,
+                    ConnectTimeout = 600,
+                    ResponseTimeout = 600,
+                    SyncTimeout = 600,
+                    AsyncTimeout = 600
                 });
         });
 

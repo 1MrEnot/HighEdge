@@ -1,9 +1,11 @@
 {
-    "NodesCount": 3,
-    "RequiredNodesCount": 2,
+    "NodesCount": 5,
+    "RequiredNodesCount": 3,
     "Nodes":[
         "10.0.0.3",
         "10.0.0.5",
-        "10.0.0.7"     
+        "10.0.0.7",   
+        "10.0.0.9",   
+        "10.0.0.11"     
     ]
 }
