@@ -2,12 +2,14 @@ namespace Straonit.HighEdge.Infrastructure.NodeRestoration;
 
 using Core.NodeRestoration;
 using Core.SplitSecret;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 
 public class PostgreNodeCommandSaver : INodeCommandSaver
 {
     private bool _dbCreated;
     private readonly NpgsqlConnection _npgsql;
+    private readonly ILogger<PostgreNodeCommandSaver> _logger;
 
     private const string InsertCreate = "INSERT INTO saved_commands VALUES (@timestamp, @hostname, @key, 1, @x, @y)";
     private const string InsertDelete = "INSERT INTO saved_commands (timestamp, hostname, key, command_type) VALUES (@timestamp, @hostname, @key, 2)";
@@ -23,9 +25,10 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
     alter table saved_commands
         owner to postgres;";
 
-    public PostgreNodeCommandSaver(NpgsqlConnection npgsql)
+    public PostgreNodeCommandSaver(NpgsqlConnection npgsql, ILogger<PostgreNodeCommandSaver> logger)
     {
         _npgsql = npgsql;
+        _logger = logger;
         _npgsql.Open();
     }
 
@@ -65,9 +68,16 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
 
     private async Task CreateTables()
     {
-        await using var createTableCmd = new NpgsqlCommand(CreateTable, _npgsql);
-        createTableCmd.ExecuteNonQuery();
-
-        _dbCreated = true;
+        try
+        {
+            await using var createTableCmd = new NpgsqlCommand(CreateTable, _npgsql);
+            createTableCmd.ExecuteNonQuery();
+            _dbCreated = true;
+            _logger.LogInformation("saved_commands table created");
+        }
+        catch
+        {
+            _logger.LogWarning("Failed to create saved_commands table");
+        }
     }
 }
