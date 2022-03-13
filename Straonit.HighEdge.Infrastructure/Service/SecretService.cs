@@ -64,7 +64,7 @@ public class SecretService:ISecretService
 
         if (successNodesCount < _config.RequiredNodesCount)
         {
-            await _rollBackService.RollBackCreate();
+            // await _rollBackService.RollBackCreate();
         }
 
         return new Response()
@@ -95,10 +95,7 @@ public class SecretService:ISecretService
             catch
             {
             }
-
-
         }
-
         return new Response()
         {
             SuccessCount = successNodesCount
@@ -145,7 +142,7 @@ public class SecretService:ISecretService
         
         if (successNodesCount < _config.RequiredNodesCount)
         {
-            await _rollBackService.RollBackUpdate(oldValueParts);
+            // await _rollBackService.RollBackUpdate(oldValueParts);
         }
 
         return new Response()

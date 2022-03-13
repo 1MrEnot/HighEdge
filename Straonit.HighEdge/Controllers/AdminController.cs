@@ -19,13 +19,15 @@ public class AdminController
     private readonly ClusterConfig _clusterConfig;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly StatusChecker _checker;
+    private readonly BackgroundWorkerQueue _backgroundWorkerQueue;
 
     public AdminController(ClusterConfig clusterConfig,
-        IHttpClientFactory httpClientFactory, StatusChecker checker)
+        IHttpClientFactory httpClientFactory, StatusChecker checker, BackgroundWorkerQueue backgroundWorkerQueue)
     {
         _clusterConfig = clusterConfig;
         _httpClientFactory = httpClientFactory;
         _checker = checker;
+        _backgroundWorkerQueue = backgroundWorkerQueue;
     }
 
     [HttpGet("node/status/all")]
@@ -37,7 +39,7 @@ public class AdminController
         foreach (var node in _clusterConfig.Nodes)
         {
             try
-            {                
+            {
                 var response = await client.GetAsync($"http://{node}:80/admin/node/status");
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
@@ -67,5 +69,15 @@ public class AdminController
     {
         var status = await _checker.GetNodeStatusAsync();
         return status;
+    }
+
+    [HttpGet("Test")]
+    public async Task Test()
+    {
+        _backgroundWorkerQueue.QueueBackgroundWorkItem(async token =>
+        {
+            await Task.Delay(10000);
+            System.Console.WriteLine("Poker");
+        });
     }
 }

@@ -32,6 +32,9 @@ builder.Services.AddShamirServices();
 builder.Services.AddTransient<StatusChecker>();
 builder.Services.AddTransient<ISecretService, SecretService>();
 
+builder.Services.AddHostedService<LongRunningService>();
+builder.Services.AddSingleton<BackgroundWorkerQueue>();
+
 
 var clusterConfigJson = File.ReadAllText(Environment.GetEnvironmentVariable("CLUSTER_CONFIG"));
 System.Console.WriteLine(clusterConfigJson);
@@ -82,10 +85,6 @@ app.UseAuthorization();
 app.MapGrpcService<GrpcServer>();
 
 app.MapControllers();
-
-
-
-//app.Urls.Add("http://"+Environment.GetEnvironmentVariable("LOCAL_IP") + ":8080");
 
 app.Run();
 
