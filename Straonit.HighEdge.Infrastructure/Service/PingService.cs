@@ -24,6 +24,6 @@ public class PingService:IPingService
             }
         }
 
-        return new Task<int>(()=>workedNodesCount);
+        return Task.FromResult(workedNodesCount);
     }
 }
