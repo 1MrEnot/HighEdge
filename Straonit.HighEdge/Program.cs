@@ -14,6 +14,7 @@ using Straonit.HighEdge.Core.Distribution;
 using Straonit.HighEdge.Infrastructure.Grpc;
 using Straonit.HighEdge.Infrastructure.Service;
 using Straonit.HighEdge.Ioc;
+using Straonit.HighEdge.Middlewares;
 using Straonit.HighEdge.Services.Implementations;
 
 
@@ -32,6 +33,7 @@ builder.Services.AddShamirServices();
 builder.Services.AddTransient<StatusChecker>();
 builder.Services.AddTransient<ISecretService, SecretService>();
 builder.Services.AddTransient<IRollBack, RollBackService>();
+builder.Services.AddTransient<IPingService, PingService>();
 
 
 var clusterConfigJson = File.ReadAllText(Environment.GetEnvironmentVariable("CLUSTER_CONFIG"));
@@ -79,6 +81,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<PingMiddleware>();
 
 app.UseAuthorization();
 app.MapGrpcService<GrpcServer>();

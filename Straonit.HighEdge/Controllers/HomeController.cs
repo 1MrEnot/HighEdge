@@ -7,6 +7,6 @@ public class TestController : Controller
 {
     public IActionResult Index()
     {
-        return View();
+        return View(null);
     }
 }
