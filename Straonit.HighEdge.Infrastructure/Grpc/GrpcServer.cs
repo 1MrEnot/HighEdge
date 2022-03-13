@@ -17,41 +17,61 @@ public class GrpcServer : SecretsService.SecretsServiceBase
 
     public override async Task<Response> CreateSecret(CreateSecretMessage request, ServerCallContext context)
     {
-        var response = await _context.CreateSecretPart(new CreateSecretRequest()
+        try
         {
-            Id = request.Id,
-            X = request.X.ToByteArray(),
-            Y = request.Y.ToByteArray()
-        });
+            var response = await _context.CreateSecretPart(new CreateSecretRequest()
+            {
+                Id = request.Id,
+                X = request.X.ToByteArray(),
+                Y = request.Y.ToByteArray()
+            });
 
-        return new Response()
+            return new Response()
+            {
+                IsSuccess = response
+            };
+        }
+        catch
         {
-            IsSuccess = response
-        };
+            return new Response()
+            {
+                IsSuccess = false
+            };
+        }
     }
 
     public override async Task<Response> DeleteSecret(DeleteSecretMessage request, ServerCallContext context)
     {
-        await _context.DeleteSecretPart(new DeleteSecretRequest()
+        try
         {
-            Id = request.Id,
-        });
+            await _context.DeleteSecretPart(new DeleteSecretRequest()
+            {
+                Id = request.Id,
+            });
 
-        return new Response()
+            return new Response
+            {
+                IsSuccess = true
+            };
+        }
+        catch (Exception ex)
         {
-            IsSuccess = true
-        };
+            return new Response
+            {
+                IsSuccess = false
+            };
+        }
     }
 
     public override async Task<GetSecretResponse> GetSecret(GetSecretMessage request, ServerCallContext context)
     {
-        var response = await _context.GetSecretPart(new GetSecretRequest()
+        try
         {
-            Id = request.Id,
-        });
+            var response = await _context.GetSecretPart(new GetSecretRequest()
+            {
+                Id = request.Id,
+            });
 
-        if (response != null)
-        {
             return new GetSecretResponse()
             {
                 IsFound = true,
@@ -59,7 +79,7 @@ public class GrpcServer : SecretsService.SecretsServiceBase
                 Y = ByteString.CopyFrom(response.Y),
             };
         }
-        else
+        catch
         {
             return new GetSecretResponse()
             {

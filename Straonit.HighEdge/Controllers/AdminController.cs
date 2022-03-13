@@ -20,16 +20,14 @@ public class AdminController
     private readonly ClusterConfig _clusterConfig;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly StatusChecker _checker;
-    private TaskService _taskService;
     private readonly ILogger<AdminController> _logger;
 
     public AdminController(ClusterConfig clusterConfig,
-        IHttpClientFactory httpClientFactory, StatusChecker checker, TaskService taskService, ILogger<AdminController> logger)
+        IHttpClientFactory httpClientFactory, StatusChecker checker, ILogger<AdminController> logger)
     {
         _clusterConfig = clusterConfig;
         _httpClientFactory = httpClientFactory;
         _checker = checker;
-        _taskService = taskService;
         _logger = logger;
     }
 
