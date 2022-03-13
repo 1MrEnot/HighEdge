@@ -15,10 +15,9 @@ using Straonit.HighEdge.Models;
 public class StatusChecker
 {
 
-    private IConnectionMultiplexer _connection;
-    private IHttpClientFactory _httpClientFactory;
+    private IConnectionMultiplexer _connection;    
 
-    public StatusChecker(ClusterConfig clusterConfig, IConnectionMultiplexer connection)
+    public StatusChecker(IConnectionMultiplexer connection)
     {
         _connection = connection;
     }
@@ -35,7 +34,7 @@ public class StatusChecker
     {
         var memoryData = File.ReadAllLines("/proc/meminfo");
         var total = Int32.Parse(Regex.Replace(memoryData[0], @"\s+", " ").Split(' ')[1]);
-        var free = Int32.Parse(Regex.Replace(memoryData[1], @"\s+", " ").Split(' ')[1]);
+        var free = Int32.Parse(Regex.Replace(memoryData[2], @"\s+", " ").Split(' ')[1]);
         var swapTotal = Int32.Parse(Regex.Replace(memoryData[14], @"\s+", " ").Split(' ')[1]);
         var swapFree = Int32.Parse(Regex.Replace(memoryData[15], @"\s+", " ").Split(' ')[1]);
         return new Ram()

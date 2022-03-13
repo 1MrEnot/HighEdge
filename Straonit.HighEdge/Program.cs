@@ -6,11 +6,14 @@ using System.Net.Sockets;
 using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Straonit.HighEdge.Core;
 using Straonit.HighEdge.Core.Configuration;
 using Straonit.HighEdge.Core.Distribution;
+using Straonit.HighEdge.Core.Persistence;
+using Straonit.HighEdge.Infrastructure;
 using Straonit.HighEdge.Infrastructure.Grpc;
 using Straonit.HighEdge.Infrastructure.Service;
 using Straonit.HighEdge.Ioc;
@@ -47,6 +50,8 @@ System.Console.WriteLine(clusterConfig.Nodes.Count);
 builder.Services.AddSingleton<ClusterConfig>(clusterConfig);
 builder.Services.AddSingleton<RollBackConfig>();
 builder.Services.AddTransient<DistributedSecretSerivce>();
+
+builder.Services.AddDbContext<IDbContext,SQLiteDbContext>(options=>options.UseSqlite(config.GetValue<string>("DATABASE_PATH")));
 
 builder.Services.AddHttpClient();
 builder.Services.AddGrpc();

@@ -20,9 +20,16 @@ public class SecretController:ControllerBase
     }
 
     [HttpPost("{key}/{secret}")]
-    public Task<Response> AddSecret(string key, string secret)
+    public async Task<IActionResult> AddSecret(string key, string secret)
     {
-        return _distributedSecretSerivce.SaveSecret(key, secret);
+        var response = await _distributedSecretSerivce.SaveSecret(key, secret);
+
+        if (response.SuccessCount < _clusterConfig.RequiredNodesCount)
+        {
+            return BadRequest(response);
+        }
+
+        return Ok(response);
     }
 
     [HttpGet("{key}")]
@@ -30,17 +37,17 @@ public class SecretController:ControllerBase
     {
         var response = await _distributedSecretSerivce.GetSecret(key);
 
-        if (response == null ||  _clusterConfig.NodesCount - response.Response.UnWorkedNodes.Count < _clusterConfig.RequiredNodesCount)
+        if (_clusterConfig.NodesCount - response.UnWorkedNodes.Count < _clusterConfig.RequiredNodesCount)
         {
-            return StatusCode(500,response);
+            return StatusCode(500,new {response.UnWorkedNodes, response.NodesWithNotExistentKey});
         }
 
-        if (_clusterConfig.NodesCount - response.Response.NodesWithNotExistentKey.Count <
+        if (_clusterConfig.NodesCount - response.NodesWithNotExistentKey.Count <
             _clusterConfig.RequiredNodesCount)
         {
-            return BadRequest(response);
+            return BadRequest(new {response.UnWorkedNodes, response.NodesWithNotExistentKey});
         }
 
-        return Ok(response);
+        return Ok(new{response.Key, response.Secret});
     }
 }
