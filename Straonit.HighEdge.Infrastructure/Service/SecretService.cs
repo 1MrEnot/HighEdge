@@ -75,9 +75,9 @@ public class SecretService : ISecretService
         }
         else
         {
-            foreach (var (key, value) in failed)
+            foreach (var (nodeUrl, (key, partOfSecret)) in failed)
             {
-                await _nodeCommandSaver.WriteCreateCommand(key, value.Item2, value.Item1);
+                await _nodeCommandSaver.WriteCreateCommand(key, partOfSecret, nodeUrl);
             }
         }
 
