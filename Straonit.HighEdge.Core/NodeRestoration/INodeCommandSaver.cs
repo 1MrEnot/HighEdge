@@ -4,9 +4,7 @@ using SplitSecret;
 
 public interface INodeCommandSaver
 {
-    public Task WriteCreateCommand(PartOfSecret partOfSecret, string nodeUrl);
-
-    public Task WriteUpdateCommand(PartOfSecret partOfSecret, string nodeUrl);
+    public Task WriteCreateCommand(string key, PartOfSecret partOfSecret, string nodeUrl);
 
     public Task WriteDeleteCommand(string key, string nodeUrl);
 }
