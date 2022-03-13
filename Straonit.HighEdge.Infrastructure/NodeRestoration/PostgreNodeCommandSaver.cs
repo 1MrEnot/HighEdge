@@ -30,6 +30,7 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
         _npgsql = npgsql;
         _logger = logger;
         _npgsql.Open();
+        CreateTables().GetAwaiter().GetResult();
     }
 
     public async Task WriteCreateCommand(string key, PartOfSecret partOfSecret, string nodeUrl)
@@ -74,9 +75,9 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
             _dbCreated = true;
             _logger.LogInformation("saved_commands table created");
         }
-        catch
+        catch(Exception ex)
         {
-            _logger.LogWarning("Failed to create saved_commands table");
+            _logger.LogError(ex, "Failed to create saved_commands table");
         }
     }
 }
