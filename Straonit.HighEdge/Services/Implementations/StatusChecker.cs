@@ -7,7 +7,10 @@ namespace Straonit.HighEdge.Services.Implementations;
 
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 using Straonit.HighEdge.Models;
@@ -17,11 +20,14 @@ public class StatusChecker
 
     private IConnectionMultiplexer _connection;    
     private TaskService _taskService;
+    private ILogger<StatusChecker> _logger;
 
-    public StatusChecker(IConnectionMultiplexer connection, TaskService taskService)
+    public StatusChecker(IConnectionMultiplexer connection, TaskService taskService,
+        ILogger<StatusChecker> logger)
     {
         _connection = connection;
         _taskService = taskService;
+        _logger = logger;
     }
 
     public IEnumerable<Disk> GetDisks()
@@ -77,7 +83,7 @@ public class StatusChecker
         catch (Exception ex)
         {
             status = ServiceStatus.Unavailable;
-            System.Console.WriteLine("Redis ex:" + ex.Message);
+            _logger.LogError(ex, "redis ex");
         }
         return status;
     }
@@ -89,12 +95,23 @@ public class StatusChecker
 
     public async Task<SelfNodeStatus> GetNodeStatusAsync()
     {
-        return new SelfNodeStatus()
+        try
         {
-            Disks = GetDisks(),
-            RedisStatus = await GetRedisStatusAsync(),
-            Ram = GetRamInfo(),
-            Tasks = _taskService.GetTasks()
-        };
+            var res = new SelfNodeStatus()
+            {
+                Disks = GetDisks(),
+                RedisStatus = await GetRedisStatusAsync(),
+                Ram = GetRamInfo(),
+                Tasks = _taskService.GetTasks()
+            };
+            var result = System.Text.Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(res));
+            _logger.LogWarning(result);
+            return res;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get node status");
+            throw;
+        }
     }
 }
