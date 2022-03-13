@@ -44,6 +44,7 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
             createCmd.Parameters.Add(new NpgsqlParameter("x", partOfSecret.X.ToByteArray()));
             createCmd.Parameters.Add(new NpgsqlParameter("y", partOfSecret.Y.ToByteArray()));
             await createCmd.ExecuteNonQueryAsync();
+            _logger.LogWarning("Saved create command for {Key}", key);
         }
         catch (Exception ex)
         {
@@ -59,6 +60,7 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
         createCmd.Parameters.Add(new NpgsqlParameter("timestamp", DateTime.UtcNow));
         createCmd.Parameters.Add(new NpgsqlParameter("hostname", nodeUrl));
         createCmd.Parameters.Add(new NpgsqlParameter("key", key));
+        _logger.LogWarning("Saved delete command for {Key}", key);
 
         await createCmd.ExecuteNonQueryAsync();
     }
