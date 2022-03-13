@@ -4,13 +4,18 @@ namespace Straonit.HighEdge.Core.SplitSecret;
 
 public class SecretWithKey
 {
+    public SecretWithKey()
+    {
+    }
+
     public SecretWithKey(string key, string secret)
     {
         Key = key;
         Secret = secret;
     }
 
-    public GetSecretResponse Response { get; set; }
+    public List<string> NodesWithNotExistentKey { get; set; } = new List<string>();
+    public List<string> UnWorkedNodes { get; set; } = new List<string>();
 
     public string Key { get; }
 

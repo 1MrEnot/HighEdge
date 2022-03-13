@@ -32,13 +32,14 @@ public class RollBackService:IRollBack
             }
             catch
             {
+                //ignore
             }
         }
     }
 
-    public async Task RollBackCreate()
+    public async Task RollBackCreate(List<string> nodes, string key)
     {
-        foreach (var node in _rollBackConfig.RollBackNodes)
+        foreach (var node in nodes)
         {
             try
             {
@@ -48,13 +49,13 @@ public class RollBackService:IRollBack
 
                 await client.DeleteSecretAsync(new DeleteSecretMessage()
                 {
-                    Id = _rollBackConfig.Key
+                    Id = key
                 },deadline:DateTime.UtcNow.AddSeconds(0.5));
             }
             catch (Exception e)
             {
+                //ignore
             }
-            
         }
     }
 }
