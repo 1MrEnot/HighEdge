@@ -16,10 +16,12 @@ public class StatusChecker
 {
 
     private IConnectionMultiplexer _connection;    
+    private TaskService _taskService;
 
-    public StatusChecker(IConnectionMultiplexer connection)
+    public StatusChecker(IConnectionMultiplexer connection, TaskService taskService)
     {
         _connection = connection;
+        _taskService = taskService;
     }
 
     public IEnumerable<Disk> GetDisks()
@@ -83,7 +85,7 @@ public class StatusChecker
     public async Task<long> GetSecretsCountAsync()
     {
         return await _connection.GetServer(_connection.GetEndPoints().First()).DatabaseSizeAsync();
-    }
+    }    
 
     public async Task<SelfNodeStatus> GetNodeStatusAsync()
     {
@@ -91,7 +93,8 @@ public class StatusChecker
         {
             Disks = GetDisks(),
             RedisStatus = await GetRedisStatusAsync(),
-            Ram = GetRamInfo()
+            Ram = GetRamInfo(),
+            Tasks = _taskService.GetTasks()
         };
     }
 }

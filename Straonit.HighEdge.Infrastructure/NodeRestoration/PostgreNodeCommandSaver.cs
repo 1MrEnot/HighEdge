@@ -42,7 +42,6 @@ public class PostgreNodeCommandSaver : INodeCommandSaver
         createCmd.Parameters.Add(new NpgsqlParameter("key", key));
         createCmd.Parameters.Add(new NpgsqlParameter("x", partOfSecret.X.ToByteArray()));
         createCmd.Parameters.Add(new NpgsqlParameter("y", partOfSecret.Y.ToByteArray()));
-
         await createCmd.ExecuteNonQueryAsync();
     }
 
