@@ -13,7 +13,7 @@ public class RollBackService : IRollBack
     public RollBackService(RollBackConfig rollBackConfig) =>
         (_rollBackConfig) = (rollBackConfig);
 
-    public async Task RollBackUpdate(List<OldValue> oldValues)
+    public async Task RollBackUpdate(List<OldValue> oldValues, string key)
     {
         foreach (var oldValue in oldValues)
         {
@@ -36,6 +36,7 @@ public class RollBackService : IRollBack
             }
         }
     }
+    
 
     public async Task RollBackCreate(List<string> nodes, string key)
     {
@@ -51,6 +52,31 @@ public class RollBackService : IRollBack
                 {
                     Id = key
                 }, deadline: DateTime.UtcNow.AddSeconds(0.5));
+            }
+            catch (Exception e)
+            {
+                //ignore
+            }
+        }
+    }
+
+    public async Task RollBackDelete(List<OldValue> oldValues, string key)
+    {
+        foreach (var oldValue in oldValues)
+        {
+            try
+            {
+                using var channel = GrpcChannel.ForAddress(oldValue.Node);
+
+                var client = new SecretsService.SecretsServiceClient(channel);
+
+                await client.CreateSecretAsync(new CreateSecretMessage()
+                {
+                    Id = key,
+                    X = ByteString.CopyFrom(oldValue.PartOfSecret.X.ToByteArray()),
+                    Y = ByteString.CopyFrom(oldValue.PartOfSecret.Y.ToByteArray()),
+                    
+                },deadline:DateTime.UtcNow.AddSeconds(0.5));
             }
             catch (Exception e)
             {

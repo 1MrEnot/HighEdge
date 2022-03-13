@@ -17,7 +17,7 @@ public class SecretService:ISecretService
     private readonly GrpcChannelOptions _dangerousChannelOptions;
     private readonly RollBackConfig _rollBackConfig;
     private readonly IRollBack _rollBackService;
-    
+
     public SecretService(ClusterConfig config,RollBackConfig rollBackConfig,IRollBack rollBackService)
     {
         _config = config;
@@ -76,6 +76,7 @@ public class SecretService:ISecretService
     public async Task<Response> DeleteSecret(string id)
     {
         var successNodesCount = 0;
+        var oldValueParts = new List<OldValue>();
         foreach (var node in _config.Nodes)
         {
             try
@@ -89,12 +90,21 @@ public class SecretService:ISecretService
                     Id = id
                 },deadline:DateTime.UtcNow.AddSeconds(0.5));
 
-                if (reply.IsSuccess)
-                    successNodesCount++;
+                successNodesCount++;
+                // oldValueParts.Add(new OldValue()
+                // {
+                //     PartOfSecret = splittedSecret.ValueParts[i],
+                //     Node = _config.Nodes[i]
+                // });
             }
             catch
             {
             }
+        }
+        
+        if (successNodesCount < _config.RequiredNodesCount)
+        {
+            await _rollBackService.RollBackDelete(oldValueParts,id);
         }
         return new Response()
         {
@@ -105,7 +115,6 @@ public class SecretService:ISecretService
     public async Task<Response> UpdateSecret(SplittedSecret splittedSecret)
     {
         var successNodesCount = 0;
-        _rollBackConfig.Key = splittedSecret.Key;
         var oldValueParts = new List<OldValue>();
 
         for(var i=0;i< _config.NodesCount;i++)
@@ -135,14 +144,13 @@ public class SecretService:ISecretService
             }
             catch
             {
+                //ignore
             }
-
-
         }
         
         if (successNodesCount < _config.RequiredNodesCount)
         {
-            // await _rollBackService.RollBackUpdate(oldValueParts);
+            await _rollBackService.RollBackUpdate(oldValueParts,splittedSecret.Key);
         }
 
         return new Response()

@@ -19,6 +19,12 @@ public class DistributedSecretSerivce
         _secretService = secretService;
         _clusterConfig = clusterConfig;
     }
+    
+    public async Task<Response> DeleteSecret(string key)
+    {
+        var res = await _secretService.DeleteSecret(key);
+        return res;
+    }
 
     public async Task<Response> SaveSecret(string key, string secret)
     {
