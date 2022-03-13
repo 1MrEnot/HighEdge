@@ -21,14 +21,16 @@ public class AdminController
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly StatusChecker _checker;
     private TaskService _taskService;
+    private readonly ILogger<AdminController> _logger;
 
     public AdminController(ClusterConfig clusterConfig,
-        IHttpClientFactory httpClientFactory, StatusChecker checker, TaskService taskService)
+        IHttpClientFactory httpClientFactory, StatusChecker checker, TaskService taskService, ILogger<AdminController> logger)
     {
         _clusterConfig = clusterConfig;
         _httpClientFactory = httpClientFactory;
         _checker = checker;
         _taskService = taskService;
+        _logger = logger;
     }
 
     [HttpGet("node/status/all")]
@@ -57,6 +59,7 @@ public class AdminController
             catch (Exception ex)
             {
                 statuses.Add(NodeStatus.CreateFailedStatus(node));
+                _logger.LogError(ex, "Returned create failed status for {Node}", node);
             }
         }
         clusterStatus.NodesStatuses = statuses;
