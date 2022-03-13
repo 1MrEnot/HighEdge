@@ -11,14 +11,14 @@ namespace Straonit.HighEdge.Infrastructure.Service;
 
 using Core.SplitSecret;
 
-public class SecretService:ISecretService
+public class SecretService : ISecretService
 {
     private readonly ClusterConfig _config;
     private readonly GrpcChannelOptions _dangerousChannelOptions;
     private readonly RollBackConfig _rollBackConfig;
     private readonly IRollBack _rollBackService;
 
-    public SecretService(ClusterConfig config,RollBackConfig rollBackConfig,IRollBack rollBackService)
+    public SecretService(ClusterConfig config, RollBackConfig rollBackConfig, IRollBack rollBackService)
     {
         _config = config;
         var dangerousHandler = new HttpClientHandler();
@@ -28,7 +28,7 @@ public class SecretService:ISecretService
         {
             HttpHandler = dangerousHandler
         };
-        (_config,_rollBackConfig,_rollBackService)=(config,rollBackConfig,rollBackService);
+        (_config, _rollBackConfig, _rollBackService) = (config, rollBackConfig, rollBackService);
     }
 
     public async Task<Response> CreateSecret(SplittedSecret splittedSecret)
@@ -36,7 +36,7 @@ public class SecretService:ISecretService
         var successNodesCount = 0;
         var nodes = new List<string>();
 
-        for (var i=0; i < _config.Nodes.Count; i++)
+        for (var i = 0; i < _config.Nodes.Count; i++)
         {
             try
             {
@@ -50,7 +50,7 @@ public class SecretService:ISecretService
                     Id = splittedSecret.Key,
                     X = ByteString.CopyFrom(splittedSecret.ValueParts[i].X.ToByteArray()),
                     Y = ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray())
-                },deadline:DateTime.UtcNow.AddSeconds(0.5));
+                }, deadline: DateTime.UtcNow.AddSeconds(0.5));
 
                 if (!reply.IsSuccess) continue;
 
@@ -64,7 +64,7 @@ public class SecretService:ISecretService
 
         if (successNodesCount < _config.RequiredNodesCount)
         {
-            await _rollBackService.RollBackCreate(nodes,splittedSecret.Key);
+            await _rollBackService.RollBackCreate(nodes, splittedSecret.Key);
         }
 
         return new Response()
@@ -88,7 +88,7 @@ public class SecretService:ISecretService
                 var reply = await client.DeleteSecretAsync(new DeleteSecretMessage()
                 {
                     Id = id
-                },deadline:DateTime.UtcNow.AddSeconds(0.5));
+                }, deadline: DateTime.UtcNow.AddSeconds(0.5));
 
                 successNodesCount++;
                 // oldValueParts.Add(new OldValue()
@@ -101,10 +101,10 @@ public class SecretService:ISecretService
             {
             }
         }
-        
+
         if (successNodesCount < _config.RequiredNodesCount)
         {
-            await _rollBackService.RollBackDelete(oldValueParts,id);
+            await _rollBackService.RollBackDelete(oldValueParts, id);
         }
         return new Response()
         {
@@ -117,7 +117,7 @@ public class SecretService:ISecretService
         var successNodesCount = 0;
         var oldValueParts = new List<OldValue>();
 
-        for(var i=0;i< _config.NodesCount;i++)
+        for (var i = 0; i < _config.NodesCount; i++)
         {
             try
             {
@@ -131,7 +131,7 @@ public class SecretService:ISecretService
                     Id = splittedSecret.Key,
                     X = ByteString.CopyFrom(splittedSecret.ValueParts[i].X.ToByteArray()),
                     Y = ByteString.CopyFrom(splittedSecret.ValueParts[i].Y.ToByteArray()),
-                },deadline:DateTime.UtcNow.AddSeconds(0.5));
+                }, deadline: DateTime.UtcNow.AddSeconds(0.5));
 
                 if (!reply.IsSuccess) continue;
 
@@ -147,10 +147,10 @@ public class SecretService:ISecretService
                 //ignore
             }
         }
-        
+
         if (successNodesCount < _config.RequiredNodesCount)
         {
-            await _rollBackService.RollBackUpdate(oldValueParts,splittedSecret.Key);
+            await _rollBackService.RollBackUpdate(oldValueParts, splittedSecret.Key);
         }
 
         return new Response()
@@ -161,7 +161,7 @@ public class SecretService:ISecretService
 
     public async Task<GetSecretResponse> GetSecret(string id)
     {
-        var response = new GetSecretResponse(){PartOfSecrets = new List<PartOfSecret>()};
+        var response = new GetSecretResponse() { PartOfSecrets = new List<PartOfSecret>() };
 
         foreach (var node in _config.Nodes)
         {
@@ -176,16 +176,20 @@ public class SecretService:ISecretService
                     Id = id
                 }, deadline: DateTime.UtcNow.AddSeconds(0.5));
 
-                response.PartOfSecrets.Add(new PartOfSecret(new BigInteger(reply.X.ToByteArray()),
-                    new BigInteger(reply.Y.ToByteArray())));
-            }
-            catch (KeyNotFoundException keyNotFoundException)
-            {
-                response.NodesWithNotExistentKey.Add($"Узел {node}: {keyNotFoundException.Message}");
+                if (!reply.IsFound)
+                {
+                    response.NodesWithNotExistentKey.Add($"Узел {node} не содержит ключа");
+                }
+                else
+                {
+                    response.PartOfSecrets.Add(new PartOfSecret(new BigInteger(reply.X.ToByteArray()),
+                                        new BigInteger(reply.Y.ToByteArray())));
+                }
             }
             catch (Exception ex)
             {
-                 response.UnWorkedNodes.Add($"Узел {node} не работает");
+                System.Console.WriteLine(ex.GetType() +": "+ ex.Message+ ": "+ ex.StackTrace);
+                response.UnWorkedNodes.Add($"Узел {node} не работает");
             }
         }
 

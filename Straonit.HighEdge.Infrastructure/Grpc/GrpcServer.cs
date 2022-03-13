@@ -9,11 +9,11 @@ using Response = Secrets.Lib.Response;
 
 namespace Straonit.HighEdge.Infrastructure.Grpc;
 
-public class GrpcServer:SecretsService.SecretsServiceBase
+public class GrpcServer : SecretsService.SecretsServiceBase
 {
     private readonly IDbContext _context;
 
-    public GrpcServer(IDbContext context) => (_context)=(context);
+    public GrpcServer(IDbContext context) => (_context) = (context);
 
     public override async Task<Response> CreateSecret(CreateSecretMessage request, ServerCallContext context)
     {
@@ -23,7 +23,7 @@ public class GrpcServer:SecretsService.SecretsServiceBase
             X = request.X.ToByteArray(),
             Y = request.Y.ToByteArray()
         });
-        
+
         return new Response()
         {
             IsSuccess = response
@@ -32,11 +32,11 @@ public class GrpcServer:SecretsService.SecretsServiceBase
 
     public override async Task<Response> DeleteSecret(DeleteSecretMessage request, ServerCallContext context)
     {
-         await _context.DeleteSecretPart(new DeleteSecretRequest()
+        await _context.DeleteSecretPart(new DeleteSecretRequest()
         {
             Id = request.Id,
         });
-        
+
         return new Response()
         {
             IsSuccess = true
@@ -49,12 +49,23 @@ public class GrpcServer:SecretsService.SecretsServiceBase
         {
             Id = request.Id,
         });
-        
-        return new GetSecretResponse()
+
+        if (response != null)
         {
-            X =ByteString.CopyFrom(response.X),
-            Y =ByteString.CopyFrom(response.Y),
-        };
+            return new GetSecretResponse()
+            {
+                IsFound = true,
+                X = ByteString.CopyFrom(response.X),
+                Y = ByteString.CopyFrom(response.Y),
+            };
+        }
+        else
+        {
+            return new GetSecretResponse()
+            {
+                IsFound = false
+            };
+        }
     }
 
     public override async Task<Response> PutSecret(PutSecretMessage request, ServerCallContext context)
@@ -65,7 +76,7 @@ public class GrpcServer:SecretsService.SecretsServiceBase
             X = request.X.ToByteArray(),
             Y = request.Y.ToByteArray()
         });
-        
+
         return new Response()
         {
             IsSuccess = response

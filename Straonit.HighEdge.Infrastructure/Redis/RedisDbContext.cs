@@ -22,8 +22,11 @@ public class RedisDbContext : IDbContext
     {
         if (!_database.KeyExists(request.Id))
         {
+            return null;
             throw new KeyNotExistsException($"Ключ {request.Id} не найден");
         }
+        if(string.IsNullOrEmpty(_database.StringGet(request.Id)))
+        System.Console.WriteLine("null");
 
         var secret = await _database.StringGetAsync(request.Id);
         var pointModel = _serializer.Deserialize<RedisPointModel>(secret);
